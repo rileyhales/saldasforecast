@@ -1,74 +1,70 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from tethys_sdk.gizmos import Button
+from tethys_sdk.gizmos import SelectInput, RangeSlider
+from .app import Saldasforecast as App
+from .model import forecast_variables, wms_colors, get_times
+
 
 @login_required()
 def home(request):
     """
     Controller for the app home page.
     """
-    save_button = Button(
-        display_text='',
-        name='save-button',
-        icon='glyphicon glyphicon-floppy-disk',
-        style='success',
-        attributes={
-            'data-toggle':'tooltip',
-            'data-placement':'top',
-            'title':'Save'
-        }
+
+    variables = forecast_variables()
+    options = []
+    for key in sorted(variables.keys()):
+        tuple1 = (key, variables[key])
+        options.append(tuple1)
+    del tuple1, key, variables
+
+    variables = SelectInput(
+        display_text='Select GLDAS Variable',
+        name='variables',
+        multiple=False,
+        original=True,
+        options=options,
     )
 
-    edit_button = Button(
-        display_text='',
-        name='edit-button',
-        icon='glyphicon glyphicon-edit',
-        style='warning',
-        attributes={
-            'data-toggle':'tooltip',
-            'data-placement':'top',
-            'title':'Edit'
-        }
+    colors = SelectInput(
+        display_text='Color Scheme',
+        name='colors',
+        multiple=False,
+        options=wms_colors(),
     )
 
-    remove_button = Button(
-        display_text='',
-        name='remove-button',
-        icon='glyphicon glyphicon-remove',
-        style='danger',
-        attributes={
-            'data-toggle':'tooltip',
-            'data-placement':'top',
-            'title':'Remove'
-        }
+    dates = SelectInput(
+        display_text='Time Interval',
+        name='dates',
+        multiple=False,
+        options=get_times(),
     )
 
-    previous_button = Button(
-        display_text='Previous',
-        name='previous-button',
-        attributes={
-            'data-toggle':'tooltip',
-            'data-placement':'top',
-            'title':'Previous'
-        }
+    ensemble = RangeSlider(
+        display_text='Ensemble Number',
+        name='ensemble',
+        min=1,
+        max=7,
+        step=1,
+        initial=1,
     )
 
-    next_button = Button(
-        display_text='Next',
-        name='next-button',
-        attributes={
-            'data-toggle':'tooltip',
-            'data-placement':'top',
-            'title':'Next'
-        }
+    opacity = RangeSlider(
+        display_text='Layer Opacity',
+        name='opacity',
+        min=.4,
+        max=1,
+        step=.05,
+        initial=.8,
     )
 
     context = {
-        'save_button': save_button,
-        'edit_button': edit_button,
-        'remove_button': remove_button,
-        'previous_button': previous_button,
-        'next_button': next_button
+        'variables': variables,
+        'opacity': opacity,
+        'colors': colors,
+        'ensemble': ensemble,
+        'dates': dates,
+        'updated': App.updated,
     }
 
     return render(request, 'saldasforecast/home.html', context)
