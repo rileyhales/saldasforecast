@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from tethys_sdk.gizmos import SelectInput, RangeSlider
 from .app import Saldasforecast as App
-from .model import forecast_variables, get_wmscolors, get_times, get_anomalytypes, get_ensemblenumbers
+from .model import forecast_variables, get_wmscolors, get_anomalytypes, get_ensemblenumbers
 
 
 @login_required()
@@ -35,13 +35,6 @@ def home(request):
         initial='Rainbow',
     )
 
-    # dates = SelectInput(
-    #     display_text='Time Interval',
-    #     name='dates',
-    #     multiple=False,
-    #     options=get_times(),
-    # )
-
     anomaly = SelectInput(
         display_text='Select Anomaly Data',
         name='anomaly',
@@ -54,7 +47,6 @@ def home(request):
         name='ensemble',
         multiple=False,
         options=get_ensemblenumbers(),
-        initial='ens0.ncml',
     )
 
     opacity = RangeSlider(
@@ -71,7 +63,6 @@ def home(request):
         'opacity': opacity,
         'colors': colors,
         'ensemble': ensemble,
-        # 'dates': dates,
         'anomaly': anomaly,
         'updated': App.updated,
     }

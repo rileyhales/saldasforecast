@@ -58,14 +58,14 @@ class Saldasforecast(TethysAppBase):
             CustomSetting(
                 name='Local Thredds Folder Path',
                 type=CustomSetting.TYPE_STRING,
-                description="Path to data in the folder mounted by Thredds (e.g. /home/thredds/myDataFolder/)",
+                description="Path to data in the folder mounted by Thredds (e.g. /Users/rileyhales/thredds/saldasforecast/)",
                 required=True,
                 # /Users/rileyhales/thredds/forecasts/
             ),
             CustomSetting(
                 name='Thredds WMS URL',
                 type=CustomSetting.TYPE_STRING,
-                description="URL to the folder of GLDAS data and .ncml files on the thredds server (e.g. tethys.byu.edu/thredds/myDataFolder/)",
+                description="URL to the folder of GLDAS data and .ncml files on the thredds server (e.g. http://127.0.0.1:7000/thredds/wms/testAll/saldasforecast/)",
                 required=True,
                 # http://127.0.0.1:7000/thredds/wms/testAll/forecasts/
             ),

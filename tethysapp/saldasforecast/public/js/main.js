@@ -64,7 +64,7 @@ $(document).ready(function() {
             opacity: $("#opacity").val(),
             BGCOLOR: '0x000000',
             styles: 'boxfill/' + $('#colors').val(),
-            colorscalerange: '-100,100',
+            colorscalerange: '-15,15',
         });
 
         let timedLayer = L.timeDimension.layer.wms(wmsLayer, {
@@ -113,11 +113,11 @@ $(document).ready(function() {
     let legend = L.control({position:'bottomright'});
         legend.onAdd = function(mapObj) {
             let div = L.DomUtil.create('div', 'legend');
-            let url = wmsbase + $("#dates").val() + '.ncml' + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=" + bounds[$("#dates").val()][$("#variables").val()];
+            let url = wmsbase + $("#anomaly").val() + $("#ensemble").val() + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=-15,15";
             div.innerHTML = '<img src="' + url + '" alt="legend" style="width:100%; float:right;">';
             return div
         };
-    // legend.addTo(mapObj);
+    legend.addTo(mapObj);
 
     // Add controls for user drawings
     let drawnItems = new L.FeatureGroup().addTo(mapObj);      // FeatureGroup is to store editable layers
@@ -154,12 +154,20 @@ $(document).ready(function() {
     ////////////////////////////////////////////////////////////////////////  EVENT LISTENERS
 
     //  Listener for the variable picker menu (selectinput gizmo)
-    $("#dates").change(function () {
+    $("#anomaly").change(function () {
         clearMap();
         layerObj = newLayer();
         controlsObj = makeControls();
         getChart(drawnItems);
-        // legend.addTo(mapObj);
+        legend.addTo(mapObj);
+    });
+
+    $("#ensemble").change(function () {
+        clearMap();
+        layerObj = newLayer();
+        controlsObj = makeControls();
+        getChart(drawnItems);
+        legend.addTo(mapObj);
     });
 
     $("#variables").change(function () {
@@ -167,7 +175,7 @@ $(document).ready(function() {
         layerObj = newLayer();
         controlsObj = makeControls();
         getChart(drawnItems);
-        // legend.addTo(mapObj);
+        legend.addTo(mapObj);
     });
 
     $("#opacity").change(function () {
@@ -178,7 +186,7 @@ $(document).ready(function() {
         clearMap();
         layerObj = newLayer();
         controlsObj = makeControls();
-        // legend.addTo(mapObj);
+        legend.addTo(mapObj);
     });
 
 });
