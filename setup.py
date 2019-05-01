@@ -10,7 +10,7 @@ app_class = 'saldasforecast.app:Saldasforecast'
 app_package_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tethysapp', app_package)
 
 # -- Python Dependencies -- #
-dependencies = []
+dependencies = ['netcdf4', 'numpy']
 
 setup(
     name=release_package,
@@ -22,7 +22,7 @@ setup(
     author='Riley Hales',
     author_email='',
     url='',
-    license='',
+    license='MIT License',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     namespace_packages=['tethysapp', 'tethysapp.' + app_package],
     include_package_data=True,

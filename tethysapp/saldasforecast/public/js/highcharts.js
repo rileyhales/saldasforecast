@@ -36,3 +36,73 @@ chart = Highcharts.chart('highchart', {
         }
     },
 });
+
+
+function newHighchart(data) {
+    chart = Highcharts.chart('highchart', {
+        title: {
+            align: "center",
+            text: data['name'] + ' v Time',
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {text: "Time"},
+        },
+        yAxis: {
+            title: {text: data['units']}
+        },
+        series: [{
+            data: data['values'],
+            type: "line",
+            name: data['name'],
+            tooltip: {
+                xDateFormat: '%A, %b %e, %Y',
+            },
+        }],
+        chart: {
+            animation: true,
+            zoomType: 'x',
+            borderColor: '#000000',
+            borderWidth: 2,
+            type: 'area',
+
+        },
+
+    });
+}
+
+
+function getChart(drawnItems) {
+//  Compatibility if user picks something out of normal bounds
+    let geometry = drawnItems.toGeoJSON()['features'];
+    if (geometry.length > 0) {
+        chart.hideNoData();
+        chart.showLoading();
+
+        let coords = geometry[0]['geometry']['coordinates'];
+        if (coords[0] < -180) {
+            coords[0] += 360;
+        }
+        if(coords[0] > 180) {
+            coords[0] -= 360;
+        }
+
+        let data = {
+            coords: coords,
+            variable: $('#variables').val(),
+            time: $("#dates").val(),
+            };
+
+            $.ajax({
+            url:'/apps/saldasforecast/ajax/timeseriesplot/',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: "application/json",
+            method: 'POST',
+            success: function(result) {
+                newHighchart(result);
+                },
+            });
+    }
+
+}

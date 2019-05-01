@@ -3,7 +3,7 @@ from django.http import JsonResponse
 
 
 @login_required()
-def generatePlot(request):
+def timeseriesplot(request):
     """
     The controller for the ajax call to create a timeseries for the area chosen by the user's drawing
     """

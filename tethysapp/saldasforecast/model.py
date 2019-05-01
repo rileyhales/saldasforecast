@@ -67,14 +67,14 @@ def forecast_variables():
     }
 
 
-def wms_colors():
+def get_wmscolors():
     """
     Color options usable by thredds wms
     """
     return [
         ('SST-36', 'sst_36'),
         ('Greyscale', 'greyscale'),
-        ('Rainbox', 'rainbow'),
+        ('Rainbow', 'rainbow'),
         ('OCCAM', 'occam'),
         ('OCCAM Pastel', 'occam_pastel-30'),
         ('Red-Blue', 'redblue'),
@@ -128,3 +128,22 @@ def app_configuration():
         'threddsurl': Saldasforecast.get_custom_setting("Thredds WMS URL"),
         'threddsdatadir': Saldasforecast.get_custom_setting("Local Thredds Folder Path"),
     }
+
+
+def get_anomalytypes():
+    return [
+        ('Anomaly Values', 'anomaly_'),
+        ('Standard Devation from Anomaly', 'stdanomaly_')
+    ]
+
+
+def get_ensemblenumbers():
+    return [
+        (1, 'ens0.ncml'),
+        (2, 'ens1.ncml'),
+        (3, 'ens2.ncml'),
+        (4, 'ens3.ncml'),
+        (5, 'ens4.ncml'),
+        (6, 'ens5.ncml'),
+        (7, 'ens6.ncml'),
+    ]

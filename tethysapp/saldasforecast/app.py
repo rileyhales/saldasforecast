@@ -13,11 +13,11 @@ class Saldasforecast(TethysAppBase):
     package = 'saldasforecast'
     root_url = 'saldasforecast'
     color = '#d35400'
-    description = 'Shows animated maps of Forecasted LIS data for South Asia and creates analytical plots'
+    description = 'Shows animated maps of forecasted LIS data for south Asia and creates analytical plots'
     tags = ''
     enable_feedback = False
     feedback_emails = []
-    updated = '23 April 2019'
+    updated = '1 May 2019'
 
     def url_maps(self):
         """
@@ -26,15 +26,28 @@ class Saldasforecast(TethysAppBase):
         UrlMap = url_map_maker(self.root_url)
 
         url_maps = (
+            # PRIMARY NAVIGABLE PAGES
             UrlMap(
                 name='home',
                 url='saldasforecast',
                 controller='saldasforecast.controllers.home'
             ),
             UrlMap(
+                name='otherpage',
+                url='saldasforecast/otherpage',
+                controller='saldasforecast.controllers.otherpage'
+            ),
+
+            # AJAX URLS
+            UrlMap(
                 name='customsettings',
                 url='saldasforecast/ajax/customsettings',
                 controller='saldasforecast.ajax.customsettings'
+            ),
+            UrlMap(
+                name='customsettings',
+                url='saldasforecast/ajax/timeseriesplot',
+                controller='saldasforecast.ajax.timeseriesplot'
             ),
         )
 

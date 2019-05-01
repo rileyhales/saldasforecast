@@ -15,12 +15,24 @@
 {% block app_title %}{{ tethys_app.name }}{% endblock %}
 
 {% block app_navigation_items %}
+
+    {% url 'saldasforecast:home' as home_url %}
+    {% url 'saldasforecast:otherpage' as otherpage_url %}
+
     <li class="title">App Navigation</li>
-    {% gizmo select_input variables %}
-    {% gizmo select_input colors %}
-    {% gizmo select_input dates %}
-    {% gizmo range_slider ensemble %}
-    {% gizmo range_slider opacity %}
+
+    <li class="{% if request.path == home_url %}active{% endif %}"><a href="{{ home_url }}">Forecast Visualization</a></li>
+    {% if request.path == home_url %}
+        <li>{% gizmo select_input variables %}</li>
+        <li>{% gizmo select_input colors %}</li>
+{#        <li>{% gizmo select_input dates %}</li>#}
+        <li>{% gizmo select_input anomaly %}</li>
+        <li>{% gizmo select_input ensemble %}</li>
+        <li>{% gizmo range_slider opacity %}</li>
+    {% endif %}
+
+    <li class="{% if request.path == otherpage_url %}active{% endif %}"><a href="{{ otherpage_url }}">Some Other Page</a></li>
+
     <p><b>Last Updated:</b> {{ updated }}</p>
     <p>Under Development at Brigham Young University by Riley Hales</p>
 {% endblock %}
@@ -63,6 +75,7 @@
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <!-- Use this to export data from highcharts as csv, jpeg, etc -->
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <!-- Use this to show loading functions and placeholders -->
     <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
 

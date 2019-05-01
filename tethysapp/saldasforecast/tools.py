@@ -15,17 +15,11 @@ def ts_plot(data):
     tperiod = data['time']
 
     configs = app_configuration()
-    data_dir = configs['threddsdatadir']
-
-    if tperiod == 'alltimes':
-        path = os.path.join(data_dir, 'raw')
-        files = os.listdir(path)
-        files.sort()
-    else:
-        path = os.path.join(data_dir, 'raw')
-        allfiles = os.listdir(path)
-        files = [nc for nc in allfiles if nc.startswith("GLDAS_NOAH025_M.A" + str(tperiod))]
-        files.sort()
+    path = configs['threddsdatadir']
+    allfiles = os.listdir(path)
+    files = [nc for nc in allfiles if nc.startswith("LIS_HIST_")]
+    files.sort()
+    del configs
 
     # find the point of data array that corresponds to the user's choice, get the units of that variable
     dataset = netCDF4.Dataset(path + '/' + str(files[0]), 'r')
@@ -35,6 +29,10 @@ def ts_plot(data):
     adj_lat_ind = (numpy.abs(nc_lats - coords[1])).argmin()
     units = dataset[variable].__dict__['units']
     dataset.close()
+    print(coords[0])
+    print(coords[1])
+    print(adj_lat_ind)
+    print(adj_lon_ind)
 
     # extract values at each timestep
     for nc in files:
@@ -43,7 +41,7 @@ def ts_plot(data):
         t_value = (dataset['time'].__dict__['begin_date'])
         t_step = datetime.datetime.strptime(t_value, "%Y%m%d")
         t_step = calendar.timegm(t_step.utctimetuple()) * 1000
-        for time, var in enumerate(dataset['time'][:]):
+        for ensemble, var in enumerate(dataset['ensemble'][:]):
             # get the value at the point
             val = float(dataset[variable][0, adj_lat_ind, adj_lon_ind].data)
             values.append((t_step, val))

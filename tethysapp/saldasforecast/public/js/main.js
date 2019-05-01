@@ -22,20 +22,20 @@ $(document).ready(function() {
             minZoom: 2,
             boxZoom: true,
             maxBounds: L.latLngBounds(L.latLng(-100.0, -270.0), L.latLng(100.0, 270.0)),
-            center: [27.25, 82],
-            // timeDimension: true,
-            // timeDimensionControl: true,
-            // timeDimensionControlOptions: {
-            //     position: "bottomleft",
-            //     autoPlay: true,
-            //     loopButton: true,
-            //     backwardButton: true,
-            //     forwardButton: true,
-            //     timeSliderDragUpdate: true,
-            //     minSpeed: 1,
-            //     maxSpeed: 6,
-            //     speedStep: 1,
-            // },
+            center: [27.25, 84],
+            timeDimension: true,
+            timeDimensionControl: true,
+            timeDimensionControlOptions: {
+                position: "bottomleft",
+                autoPlay: true,
+                loopButton: true,
+                backwardButton: true,
+                forwardButton: true,
+                timeSliderDragUpdate: true,
+                minSpeed: 1,
+                maxSpeed: 6,
+                speedStep: 1,
+            },
         });
     }
 
@@ -51,12 +51,13 @@ $(document).ready(function() {
     }
 
     function newLayer() {
-        let wmsurl = 'http://127.0.0.1:7000/thredds/wms/testAll/forecasts/LIS_HIST_201908230000.d01.nc'; // + $("#dates").val() + '.ncml';
+        let wmsurl =  wmsbase + $("#anomaly").val() + $("#ensemble").val();
+        console.log(wmsurl);
         let wmsLayer = L.tileLayer.wms(wmsurl, {
             // version: '1.3.0',
             layers: $("#variables").val(),
-            // dimension: 'time',
-            // useCache: true,
+            dimension: 'time',
+            useCache: true,
             crossOrigin: false,
             format: 'image/png',
             transparent: true,
@@ -64,17 +65,17 @@ $(document).ready(function() {
             BGCOLOR: '0x000000',
             styles: 'boxfill/' + $('#colors').val(),
             colorscalerange: '-100,100',
-        }).addTo(mapObj);
+        });
 
-        // let timedLayer = L.timeDimension.layer.wms(wmsLayer, {
-        //     name: 'time',
-        //     requestTimefromCapabilities: true,
-        //     updateTimeDimension: true,
-        //     updateTimeDimensionMode: 'replace',
-        //     cache: 20,
-        //     }).addTo(mapObj);
+        let timedLayer = L.timeDimension.layer.wms(wmsLayer, {
+            name: 'time',
+            requestTimefromCapabilities: true,
+            updateTimeDimension: true,
+            updateTimeDimensionMode: 'replace',
+            cache: 20,
+            }).addTo(mapObj);
 
-        return wmsLayer;
+        return timedLayer;
     }
 
     function makeControls() {
@@ -141,7 +142,7 @@ $(document).ready(function() {
     mapObj.on(L.Draw.Event.CREATED, function (event) {
         drawnItems.addLayer(event.layer);
         L.Draw.Event.STOP;
-        // getChart(drawnItems);
+        getChart(drawnItems);
         // e.layer.addTo(drawnItems);
     });
 
@@ -157,7 +158,7 @@ $(document).ready(function() {
         clearMap();
         layerObj = newLayer();
         controlsObj = makeControls();
-        // getChart(drawnItems);
+        getChart(drawnItems);
         // legend.addTo(mapObj);
     });
 
@@ -165,7 +166,7 @@ $(document).ready(function() {
         clearMap();
         layerObj = newLayer();
         controlsObj = makeControls();
-        // getChart(drawnItems);
+        getChart(drawnItems);
         // legend.addTo(mapObj);
     });
 

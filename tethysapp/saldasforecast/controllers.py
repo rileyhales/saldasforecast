@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from tethys_sdk.gizmos import SelectInput, RangeSlider
 from .app import Saldasforecast as App
-from .model import forecast_variables, wms_colors, get_times
+from .model import forecast_variables, get_wmscolors, get_times, get_anomalytypes, get_ensemblenumbers
 
 
 @login_required()
@@ -24,29 +24,37 @@ def home(request):
         multiple=False,
         original=True,
         options=options,
+        initial='Soil moisture content',
     )
 
     colors = SelectInput(
         display_text='Color Scheme',
         name='colors',
         multiple=False,
-        options=wms_colors(),
+        options=get_wmscolors(),
+        initial='Rainbow',
     )
 
-    dates = SelectInput(
-        display_text='Time Interval',
-        name='dates',
+    # dates = SelectInput(
+    #     display_text='Time Interval',
+    #     name='dates',
+    #     multiple=False,
+    #     options=get_times(),
+    # )
+
+    anomaly = SelectInput(
+        display_text='Select Anomaly Data',
+        name='anomaly',
         multiple=False,
-        options=get_times(),
+        options=get_anomalytypes(),
     )
 
-    ensemble = RangeSlider(
-        display_text='Ensemble Number',
+    ensemble = SelectInput(
+        display_text='Select Ensemble Number',
         name='ensemble',
-        min=1,
-        max=7,
-        step=1,
-        initial=1,
+        multiple=False,
+        options=get_ensemblenumbers(),
+        initial='ens0.ncml',
     )
 
     opacity = RangeSlider(
@@ -63,8 +71,20 @@ def home(request):
         'opacity': opacity,
         'colors': colors,
         'ensemble': ensemble,
-        'dates': dates,
+        # 'dates': dates,
+        'anomaly': anomaly,
         'updated': App.updated,
     }
 
     return render(request, 'saldasforecast/home.html', context)
+
+
+@login_required()
+def otherpage(request):
+    """
+    Controller for the app home page.
+    """
+    context = {
+        'updated': App.updated,
+    }
+    return render(request, 'saldasforecast/otherpage.html', context)
