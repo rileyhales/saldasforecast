@@ -12,36 +12,35 @@ def ts_plot(data):
     values = []
     variable = str(data['variable'])
     coords = data['coords']
-    tperiod = data['time']
+    anomtype = data['anomaly']
 
     configs = app_configuration()
-    path = configs['threddsdatadir']
+    path = os.path.join(configs['threddsdatadir'], '3splitensemble')
     allfiles = os.listdir(path)
-    files = [nc for nc in allfiles if nc.startswith("LIS_HIST_")]
+    files = [nc for nc in allfiles if nc.startswith(anomtype)]
     files.sort()
     del configs
 
     # find the point of data array that corresponds to the user's choice, get the units of that variable
-    dataset = netCDF4.Dataset(path + '/' + str(files[0]), 'r')
+    datapath = os.path.join(path, str(files[0]))
+    dataset = netCDF4.Dataset(datapath, 'r')
     nc_lons = dataset['lon'][:]
     nc_lats = dataset['lat'][:]
     adj_lon_ind = (numpy.abs(nc_lons - coords[0])).argmin()
     adj_lat_ind = (numpy.abs(nc_lats - coords[1])).argmin()
     units = dataset[variable].__dict__['units']
     dataset.close()
-    print(coords[0])
-    print(coords[1])
-    print(adj_lat_ind)
-    print(adj_lon_ind)
 
     # extract values at each timestep
     for nc in files:
         # set the time value for each file
-        dataset = netCDF4.Dataset(path + '/' + nc, 'r')
-        t_value = (dataset['time'].__dict__['begin_date'])
-        t_step = datetime.datetime.strptime(t_value, "%Y%m%d")
+        datapath = os.path.join(path, nc)
+        dataset = netCDF4.Dataset(datapath, 'r')
+        # t_value = (dataset['time'].__dict__['begin_date'])
+        time = nc.replace('stdanomaly.', '').replace('anomaly.', '')[0:6]
+        t_step = datetime.datetime.strptime(time, "%Y%m")
         t_step = calendar.timegm(t_step.utctimetuple()) * 1000
-        for ensemble, var in enumerate(dataset['ensemble'][:]):
+        for ensemble, var in enumerate(dataset[variable][:]):
             # get the value at the point
             val = float(dataset[variable][0, adj_lat_ind, adj_lon_ind].data)
             values.append((t_step, val))

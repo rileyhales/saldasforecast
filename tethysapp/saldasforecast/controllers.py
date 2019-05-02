@@ -19,33 +19,36 @@ def home(request):
     del tuple1, key, variables
 
     variables = SelectInput(
-        display_text='Select GLDAS Variable',
+        display_text='Select LDAS Variable',
         name='variables',
         multiple=False,
         original=True,
         options=options,
-        initial='Soil moisture content',
+        initial='Air temperature',
     )
 
     colors = SelectInput(
         display_text='Color Scheme',
         name='colors',
         multiple=False,
+        original=True,
         options=get_wmscolors(),
         initial='Rainbow',
     )
 
     anomaly = SelectInput(
-        display_text='Select Anomaly Data',
+        display_text='Choose Anomaly Type',
         name='anomaly',
         multiple=False,
+        original=True,
         options=get_anomalytypes(),
     )
 
     ensemble = SelectInput(
-        display_text='Select Ensemble Number',
+        display_text='Pick Ensemble Number',
         name='ensemble',
         multiple=False,
+        original=True,
         options=get_ensemblenumbers(),
     )
 
@@ -54,7 +57,7 @@ def home(request):
         name='opacity',
         min=.4,
         max=1,
-        step=.05,
+        step=.025,
         initial=.8,
     )
 

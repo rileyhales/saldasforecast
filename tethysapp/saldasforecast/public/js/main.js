@@ -52,7 +52,6 @@ $(document).ready(function() {
 
     function newLayer() {
         let wmsurl =  wmsbase + $("#anomaly").val() + $("#ensemble").val();
-        console.log(wmsurl);
         let wmsLayer = L.tileLayer.wms(wmsurl, {
             // version: '1.3.0',
             layers: $("#variables").val(),

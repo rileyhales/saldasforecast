@@ -25,9 +25,6 @@ def get_wmscolors():
         ('ALG', 'alg'),
         ('ALG 2', 'alg2'),
         ('Ferret', 'ferret'),
-        # ('Probability', 'prob'),
-        # ('White-Blue', whiteblue'),
-        # ('Grace', 'grace'),
         ]
 
 
@@ -46,18 +43,18 @@ def app_configuration():
 
 def get_anomalytypes():
     return [
-        ('Anomaly Values', 'anomaly_'),
-        ('Standard Devation from Anomaly', 'stdanomaly_')
+        ('Anomaly Values', 'anomaly'),
+        ('Standard Deviation from Anomaly', 'stdanomaly')
     ]
 
 
 def get_ensemblenumbers():
     return [
-        (1, 'ens0.ncml'),
-        (2, 'ens1.ncml'),
-        (3, 'ens2.ncml'),
-        (4, 'ens3.ncml'),
-        (5, 'ens4.ncml'),
-        (6, 'ens5.ncml'),
-        (7, 'ens6.ncml'),
+        (1, '_ens0.ncml'),
+        (2, '_ens1.ncml'),
+        (3, '_ens2.ncml'),
+        (4, '_ens3.ncml'),
+        (5, '_ens4.ncml'),
+        (6, '_ens5.ncml'),
+        (7, '_ens6.ncml'),
     ]

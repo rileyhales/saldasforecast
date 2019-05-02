@@ -90,7 +90,7 @@ function getChart(drawnItems) {
         let data = {
             coords: coords,
             variable: $('#variables').val(),
-            time: $("#dates").val(),
+            anomaly: $("#anomaly").val(),
             };
 
             $.ajax({
