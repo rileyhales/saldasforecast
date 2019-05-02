@@ -37,7 +37,7 @@ def ts_plot(data):
         datapath = os.path.join(path, nc)
         dataset = netCDF4.Dataset(datapath, 'r')
         # t_value = (dataset['time'].__dict__['begin_date'])
-        time = nc.replace('stdanomaly.', '').replace('anomaly.', '')[0:6]
+        time = nc.replace(anomtype, '').replace('.', '')[0:6]
         t_step = datetime.datetime.strptime(time, "%Y%m")
         t_step = calendar.timegm(t_step.utctimetuple()) * 1000
         for ensemble, var in enumerate(dataset[variable][:]):

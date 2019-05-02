@@ -14,6 +14,46 @@
 {# The name you provided in your app.py is accessible through the tethys_app.name context variable #}
 {% block app_title %}{{ tethys_app.name }}{% endblock %}
 
+{% block after_app_content %}
+    <div class="modal fade" id="maps-modal" tabindex="-1" role="dialog" aria-labelledby="maps-modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="maps-modal-label">Animated Maps</h3>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="chart-modal" tabindex="-1" role="dialog" aria-labelledby="chart-modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="chart-modal-label">Timeseries Plots</h3>
+                </div>
+                <div class="modal-body">
+                    <img src="{% static 'saldasforecast/images/samplechart.jpeg' %}" style="width: 100%;">
+                    <p>This app will plot a timeseries for a location within the bounds of the forecasted data. To generate a timeseries plot, click the Point Marker icon found on the top left of the map and then place the marker somewhere on the map within the boundaries of the forecast.</p>
+                    <p>The chart plots each of the monthly forecasted values, for each of the ensembles, for the location you choose. The vertical dashes over each month of the chart represents the spread of forecasted values in the various ensemble members. The sizes of the vertical dashes should only be used to compare the relative size of the uncertainty in a month versus the uncertainty of another month. For example, in the figure above the spread of values in July looks very large compared to April and May but is actually quite small overall when you read the values of the spread on the y-axis.</p>
+                    <p>For options to save the chart as a graphic or download the values in the plot, use the icon on the top right of the chart.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
 {% block app_navigation_items %}
 
     {% url 'saldasforecast:home' as home_url %}
@@ -28,11 +68,14 @@
         <li>{% gizmo select_input anomaly %}</li>
         <li>{% gizmo select_input ensemble %}</li>
         <li>{% gizmo range_slider opacity %}</li>
+        <a class="btn btn-primary btn-block" role="button" data-toggle="modal" data-target="#maps-modal">Help Me Understand This Map</a>
+        <a class="btn btn-primary btn-block" role="button" data-toggle="modal" data-target="#chart-modal">Help Me Understand This Chart</a>
+        <a class="btn btn-primary btn-block" role="button" href="{{ youtubelink }}" target="_blank">Watch a Video Demonstration</a>
     {% endif %}
 
     <li class="{% if request.path == otherpage_url %}active{% endif %}"><a href="{{ otherpage_url }}">Some Other Page</a></li>
 
-    <p><b>Last Updated:</b> {{ updated }}</p>
+    <p><b>Last Updated: </b>{{ updated }}</p>
     <p>Under Development at Brigham Young University by Riley Hales</p>
 {% endblock %}
 

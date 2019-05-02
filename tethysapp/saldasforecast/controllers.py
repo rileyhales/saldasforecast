@@ -68,6 +68,7 @@ def home(request):
         'ensemble': ensemble,
         'anomaly': anomaly,
         'updated': App.updated,
+        'youtubelink': App.youtubelink,
     }
 
     return render(request, 'saldasforecast/home.html', context)
