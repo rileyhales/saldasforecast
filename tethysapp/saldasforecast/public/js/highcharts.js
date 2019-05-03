@@ -12,6 +12,9 @@ Highcharts.setOptions({
     },
 });
 
+let plotdata;
+let chart;
+
 // Placeholder chart
 chart = Highcharts.chart('highchart', {
     title: {
@@ -38,7 +41,7 @@ chart = Highcharts.chart('highchart', {
 });
 
 
-function newHighchart(data) {
+function newSingleLinePlot(data) {
     chart = Highcharts.chart('highchart', {
         title: {
             align: "center",
@@ -72,6 +75,14 @@ function newHighchart(data) {
 }
 
 
+function newMultiLinePlot(data) {
+}
+
+
+function newBoxWhiskerPlot(data) {
+}
+
+
 function getChart(drawnItems) {
 //  Compatibility if user picks something out of normal bounds
     let geometry = drawnItems.toGeoJSON()['features'];
@@ -83,7 +94,7 @@ function getChart(drawnItems) {
         if (coords[0] < -180) {
             coords[0] += 360;
         }
-        if(coords[0] > 180) {
+        if (coords[0] > 180) {
             coords[0] -= 360;
         }
 
@@ -91,18 +102,25 @@ function getChart(drawnItems) {
             coords: coords,
             variable: $('#variables').val(),
             anomaly: $("#anomaly").val(),
-            };
+        };
 
-            $.ajax({
-            url:'/apps/saldasforecast/ajax/timeseriesplot/',
+        $.ajax({
+            url: '/apps/saldasforecast/ajax/timeseriesplot/',
             data: JSON.stringify(data),
             dataType: 'json',
             contentType: "application/json",
             method: 'POST',
-            success: function(result) {
-                newHighchart(result);
-                },
-            });
+            success: function (result) {
+                plotdata = result;
+                if ($("#charttype").val() === 'singleline') {
+                    newSingleLinePlot(plotdata);
+                } else if ($("#charttype").val() === 'multiline') {
+                    newMultiLinePlot(plotdata);
+                } else if ($("#charttype").val() === 'boxplot') {
+                    newBoxWhiskerPlot(plotdata);
+                }
+            }
+        });
     }
 
 }
