@@ -10,19 +10,15 @@ def timeseriesplot(request):
     from .model import forecast_variables
     from .tools import ts_plot
     import ast
-
     data = ast.literal_eval(request.body.decode('utf-8'))
-    response_object = {}
-    plot_items = ts_plot(data)
-    response_object['units'] = plot_items[0]
-    response_object['values'] = plot_items[1]
+    plotdata = ts_plot(data)
     variables = forecast_variables()
     for key in variables:
         if variables[key] == data['variable']:
             name = key
             break
-    response_object['name'] = name
-    return JsonResponse(response_object)
+    plotdata['name'] = name
+    return JsonResponse(plotdata)
 
 
 @login_required()

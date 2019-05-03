@@ -43,6 +43,13 @@ chart = Highcharts.chart('highchart', {
 
 function newSingleLinePlot(data) {
     chart = Highcharts.chart('highchart', {
+        chart: {
+            type: 'area',
+            animation: true,
+            zoomType: 'x',
+            borderColor: '#000000',
+            borderWidth: 2,
+        },
         title: {
             align: "center",
             text: data['name'] + ' v Time',
@@ -51,35 +58,88 @@ function newSingleLinePlot(data) {
             type: 'datetime',
             title: {text: "Time"},
         },
-        yAxis: {
-            title: {text: data['units']}
-        },
+        yAxis: {title: {text: data['units']}},
         series: [{
-            data: data['values'],
+            data: data['singleline'],
             type: "line",
             name: data['name'],
-            tooltip: {
-                xDateFormat: '%A, %b %e, %Y',
-            },
+            tooltip: {xDateFormat: '%A, %b %e, %Y'},
         }],
-        chart: {
-            animation: true,
-            zoomType: 'x',
-            borderColor: '#000000',
-            borderWidth: 2,
-            type: 'area',
-
-        },
 
     });
 }
 
 
 function newMultiLinePlot(data) {
+    chart = Highcharts.chart('highchart', {
+        chart: {
+            type: 'line',
+            animation: true,
+            zoomType: 'x',
+            borderColor: '#000000',
+            borderWidth: 2,
+        },
+        title: {
+            align: "center",
+            text: data['name'] + ' v Time',
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {text: "Time"},
+        },
+        yAxis: {title: {text: data['units']}},
+        series: [{
+            data: data['min'],
+            type: "line",
+            name: 'Forecast Minimum',
+            tooltip: {xDateFormat: '%A, %b %e, %Y'},
+            },
+            {
+                data: data['max'],
+                type: "line",
+                name: 'Forecast Maximum',
+                tooltip: {xDateFormat: '%A, %b %e, %Y'},
+            },
+            {
+                data: data['mean'],
+                type: "line",
+                name: 'Forecast Average',
+                tooltip: {xDateFormat: '%A, %b %e, %Y'},
+            }
+        ],
+
+    });
 }
 
 
 function newBoxWhiskerPlot(data) {
+    chart = Highcharts.chart('highchart', {
+        chart: {
+            type: 'boxplot',
+            animation: true,
+            zoomType: 'x',
+            borderColor: '#000000',
+            borderWidth: 2,
+        },
+        title: {
+            text: data['name'] + ' v Time'
+        },
+        legend: {
+            enabled: false
+        },
+        xAxis: {
+            type: 'datetime',
+            // categories: ['1', '2', '3', '4', '5'],
+            title: {text: 'Time',}
+        },
+        yAxis: {title: {text: data['units']}},
+        series: [{
+            name: data['name'],
+            data: data['boxplot'],
+            tooltip: {xDateFormat: '%A, %b %e, %Y',},
+        }]
+
+    });
 }
 
 
