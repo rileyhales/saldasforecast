@@ -33,11 +33,6 @@ class Saldasforecast(TethysAppBase):
                 url='saldasforecast',
                 controller='saldasforecast.controllers.home'
             ),
-            UrlMap(
-                name='otherpage',
-                url='saldasforecast/otherpage',
-                controller='saldasforecast.controllers.otherpage'
-            ),
 
             # AJAX URLS
             UrlMap(

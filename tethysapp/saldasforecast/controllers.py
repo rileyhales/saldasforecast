@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from tethys_sdk.gizmos import SelectInput, RangeSlider
 from .app import Saldasforecast as App
-from .model import forecast_variables, get_wmscolors, get_anomalytypes, get_ensemblenumbers
+from .model import forecast_variables, get_wmscolors, get_anomalytypes, get_ensemblenumbers, get_charttypes
 
 
 @login_required()
@@ -52,6 +52,14 @@ def home(request):
         options=get_ensemblenumbers(),
     )
 
+    charttype = SelectInput(
+        display_text='Choose a Plot Type',
+        name='charttype',
+        multiple=False,
+        original=True,
+        options=get_charttypes(),
+    )
+
     opacity = RangeSlider(
         display_text='Layer Opacity',
         name='opacity',
@@ -67,19 +75,9 @@ def home(request):
         'colors': colors,
         'ensemble': ensemble,
         'anomaly': anomaly,
+        'charttype': charttype,
         'updated': App.updated,
         'youtubelink': App.youtubelink,
     }
 
     return render(request, 'saldasforecast/home.html', context)
-
-
-@login_required()
-def otherpage(request):
-    """
-    Controller for the app home page.
-    """
-    context = {
-        'updated': App.updated,
-    }
-    return render(request, 'saldasforecast/otherpage.html', context)

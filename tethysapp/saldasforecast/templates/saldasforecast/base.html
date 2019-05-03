@@ -56,27 +56,23 @@
 
 {% block app_navigation_items %}
 
-    {% url 'saldasforecast:home' as home_url %}
-    {% url 'saldasforecast:otherpage' as otherpage_url %}
+    <li class="title">Map Controls</li>
+    <a class="btn btn-warning btn-block" role="button" data-toggle="modal" data-target="#maps-modal">How To Interpret This Map</a>
+    <li>{% gizmo select_input variables %}</li>
+    <li>{% gizmo select_input colors %}</li>
+    <li>{% gizmo select_input anomaly %}</li>
+    <li>{% gizmo select_input ensemble %}</li>
+    <li>{% gizmo range_slider opacity %}</li>
 
-    <li class="title">App Navigation</li>
+    <li class="title">Chart Controls</li>
+    <a class="btn btn-warning btn-block" role="button" data-toggle="modal" data-target="#chart-modal">How To Interpret This Chart</a>
+    <li>{% gizmo select_input charttype %}</li>
 
-    <li class="{% if request.path == home_url %}active{% endif %}"><a href="{{ home_url }}">Forecast Visualization</a></li>
-    {% if request.path == home_url %}
-        <li>{% gizmo select_input variables %}</li>
-        <li>{% gizmo select_input colors %}</li>
-        <li>{% gizmo select_input anomaly %}</li>
-        <li>{% gizmo select_input ensemble %}</li>
-        <li>{% gizmo range_slider opacity %}</li>
-        <a class="btn btn-primary btn-block" role="button" data-toggle="modal" data-target="#maps-modal">Help Me Understand This Map</a>
-        <a class="btn btn-primary btn-block" role="button" data-toggle="modal" data-target="#chart-modal">Help Me Understand This Chart</a>
-        <a class="btn btn-primary btn-block" role="button" href="{{ youtubelink }}" target="_blank">Watch a Video Demonstration</a>
-    {% endif %}
-
-    <li class="{% if request.path == otherpage_url %}active{% endif %}"><a href="{{ otherpage_url }}">Some Other Page</a></li>
-
+    <li class="title">Help and Resources</li>
+    <a class="btn btn-warning btn-block" role="button" href="{{ youtubelink }}" target="_blank">Watch a Video Demonstration</a>
     <p><b>Last Updated: </b>{{ updated }}</p>
     <p>Under Development at Brigham Young University by Riley Hales</p>
+
 {% endblock %}
 
 {% block app_content %}

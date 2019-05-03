@@ -58,3 +58,11 @@ def get_ensemblenumbers():
         (6, '_ens5.ncml'),
         (7, '_ens6.ncml'),
     ]
+
+
+def get_charttypes():
+    return [
+        ('Single-Line Timeseries', 'singleline'),
+        ('Multi-Line Timeseries', 'multiline'),
+        ('Box-Whisker Plot', 'boxplot'),
+    ]
