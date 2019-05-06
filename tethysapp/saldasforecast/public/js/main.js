@@ -67,7 +67,13 @@ let controlsObj = makeControls();       // the layer toggle controls top-right c
 let legend = L.control({position: 'bottomright'});
 legend.onAdd = function (mapObj) {
     let div = L.DomUtil.create('div', 'legend');
-    let url = wmsbase + $("#anomaly").val() + $("#ensemble").val() + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=-15,15";
+    let url;
+    if ($("#anomaly").val() === 'ensemble_mean') {
+        url =  wmsbase + $("#anomaly").val() + '.ncml';
+    } else {
+        url = wmsbase + $("#anomaly").val() + $("#ensemble").val();
+    }
+    url = url + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=-15,15";
     div.innerHTML = '<img src="' + url + '" alt="legend" style="width:100%; float:right;">';
     return div
 };
@@ -77,12 +83,17 @@ legend.addTo(mapObj);
 ////////////////////////////////////////////////////////////////////////  EVENT LISTENERS
 
 //  Listener for the variable picker menu (selectinput gizmo)
-$("#anomaly").change(function () {
+$("#anomaly").change(function (self) {
     clearMap();
     layerObj = newLayer();
     controlsObj = makeControls();
     getChart(drawnItems);
     legend.addTo(mapObj);
+    if ($("#anomaly").val() === 'ensemble_mean') {
+        $("#box-warning").show();
+    } else {
+        $("#box-warning").hide();
+    }
 });
 
 $("#ensemble").change(function () {

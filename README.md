@@ -7,7 +7,7 @@ This application is compatible with Tethys 2.X and Tethys 3 Distributions and is
 On the terminal of the server enter the tethys environment with the ```t``` command. ```cd``` to the directory where you install apps then run the following commands:  
 ~~~~
 git clone https://github.com/rileyhales/saldasforecast.git  
-cd gldas
+cd saldasforecast
 python setup.py develop
 ~~~~  
 If you are on a production server, run:
@@ -73,6 +73,6 @@ Verify that you have completed steps 2 and 3 correctly by viewing the Thredds ca
 ## 4 Set The Custom Settings
 You need to specify 2 custom settings when you install the app. The file path to where you are storing the gldas netCDF files locally on the server and the base wms URL for the thredds server that will be serving the data.
 
-**Local File Path:** This is the full path to the directory named gldas that you should have created within the thredds data directory during step 2. You can get this by navigating to that folder in the terminal and then using the ```pwd``` command. (example: ```/tomcat/content/thredds/gldas/```)  
+**Local File Path:** This is the full path to the directory named saldasforecast that you should have created within the thredds data directory during step 2. You can get this by navigating to that folder in the terminal and then using the ```pwd``` command. (example: ```/tomcat/content/thredds/saldasforecast/```)  
 
-**WMS base address:** This is the base that the app uses to build urls for each of the OGC WMS layers for the netcdf datasets. If you followed the typical configuration of thredds (these instructions) then your base url will look something like ```yourserver.com/thredds/wms/testAll/saldasforecast/```. You can verify this by opening the thredds catalog in a web browser (typically at ```yourserver.com/thredds/catalog.html```). Navigate to one of the GLDAS netcdf files and click the WMS link. A page showing an xml document should load. Copy the url in the address bar until you get to the ```/gldas/``` folder in that url. Do not include ```/raw/name_of_dataset.nc``` or the request info that comes after it. (example: ```https://tethys.byu.edu/thredds/wms/testAll/gldas/```)
+**WMS base address:** This is the base that the app uses to build urls for each of the OGC WMS layers for the netcdf datasets. If you followed the typical configuration of thredds (these instructions) then your base url will look something like ```yourserver.com/thredds/wms/testAll/saldasforecast/```. You can verify this by opening the thredds catalog in a web browser (typically at ```yourserver.com/thredds/catalog.html```). Navigate to one of the LDAS netcdf files and click the WMS link. A page showing an xml document should load. Copy the url in the address bar until you get to the ```/saldasforecast/``` folder in that url. Do not include ```/3splitsensemble/name_of_dataset.nc``` or the request info that comes after it. (example: ```https://tethys.byu.edu/thredds/wms/testAll/saldasforecast/```)
