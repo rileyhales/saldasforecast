@@ -1,4 +1,4 @@
-# GLDAS Data Visualizer Documentation
+# SALDAS Forecast Visualizer Documentation
 This is a Tethys 2/3 compatible app that visualizes forecasted LDAS data for the South Asia region. LDAS Forecasting by Ben Zaitchik and Yifan Zhou at John Hopkins University. App and analysis tools by Riley Hales and Jim Nelson at the Brigham Young University Hydroinformatics Lab. Research from 2018 through present.
 
 ## 1 Install the Tethys App
