@@ -44,7 +44,7 @@ def app_configuration():
 def get_anomalytypes():
     return [
         ('Anomaly Values', 'anomaly'),
-        ('Standard Deviation from Anomaly', 'stdanomaly')
+        ('Standard Deviation from Anomaly', 'std_anomaly')
     ]
 
 

@@ -88,20 +88,21 @@ function newMultiLinePlot(data) {
             title: {text: "Time"},
         },
         yAxis: {title: {text: data['units']}},
-        series: [{
-            data: data['min'],
+        series: [
+            {
+            data: data['multiline']['min'],
             type: "line",
             name: 'Forecast Minimum',
             tooltip: {xDateFormat: '%A, %b %e, %Y'},
             },
             {
-                data: data['max'],
+                data: data['multiline']['max'],
                 type: "line",
                 name: 'Forecast Maximum',
                 tooltip: {xDateFormat: '%A, %b %e, %Y'},
             },
             {
-                data: data['mean'],
+                data: data['multiline']['mean'],
                 type: "line",
                 name: 'Forecast Average',
                 tooltip: {xDateFormat: '%A, %b %e, %Y'},
@@ -121,12 +122,8 @@ function newBoxWhiskerPlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {
-            text: data['name'] + ' v Time'
-        },
-        legend: {
-            enabled: false
-        },
+        title: {text: data['name'] + ' v Time'},
+        legend: {enabled: false},
         xAxis: {
             type: 'datetime',
             // categories: ['1', '2', '3', '4', '5'],
