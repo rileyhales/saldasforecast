@@ -72,7 +72,4 @@ def ts_plot(data):
         # get statistics for the box plot format
         plotdata['boxplot'].append([daymin, mean - std, mean, mean + std, daymax])
 
-    import pprint
-    pprint.pprint(plotdata)
-
     return plotdata

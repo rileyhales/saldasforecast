@@ -24,6 +24,11 @@
                     <h3 class="modal-title" id="maps-modal-label">Animated Maps</h3>
                 </div>
                 <div class="modal-body">
+                  <p>The data shown in this map is based on NASA LDAS. Since these are long term forecasts, there is uncertainty in the predictions. Many predictions are made and treated collectively in a group referred to as an ensemble. Each of the predictions are numbered and viewable by changing the Ensemble Number control. The data have been processed to show only anomalies, departures from the historical average or "normal" value, and regions that are anomalies by more than 1 standard deviation above/below the average.</p>
+                  <img src="{% static 'saldasforecast/images/samplemap.png' %}" style="width: 100%;">
+                  <p><strong>Animate the map vs Time:</strong> Use the controls found in the bottom right of the map region to animate the map data over time. Use the play button to cycle through the 9 months of forecast values or use the slider to get to a specific time step. Because of the uncertainty and processing steps, the maps will appear choppy when animated over time. This is normal given the data being represented herein.</p>
+                  <p><strong>Place points:</strong> Use the point marker and trash can control to place a marker on the map at a location of your choice. The app will generate a timeseries of forecasted values at that location vs time. Use the chart controls for more customization.</p>
+                  <p>You may change the variable and ensemble number to change the data being shown as well as the opacity and color scheme to change the representation.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
@@ -41,8 +46,10 @@
                 </div>
                 <div class="modal-body">
                     <img src="{% static 'saldasforecast/images/samplechart.jpeg' %}" style="width: 100%;">
-                    <p>This app will plot a timeseries for a location within the bounds of the forecasted data. To generate a timeseries plot, click the Point Marker icon found on the top left of the map and then place the marker somewhere on the map within the boundaries of the forecast.</p>
-                    <p>The chart plots each of the monthly forecasted values, for each of the ensembles, for the location you choose. The vertical dashes over each month of the chart represents the spread of forecasted values in the various ensemble members. The sizes of the vertical dashes should only be used to compare the relative size of the uncertainty in a month versus the uncertainty of another month. For example, in the figure above the spread of values in July looks very large compared to April and May but is actually quite small overall when you read the values of the spread on the y-axis.</p>
+                    <p>This app will plot a timeseries for a location within the bounds of the forecasted data. To generate a timeseries plot, click the Point Marker icon found on the top left of the map and then place the marker somewhere on the map within the boundaries of the forecast. The chart plots each of the monthly forecasted values, for each of the ensembles, for the location you choose.</p>
+                    <p><strong>Single-Line:</strong> The vertical dashes over each month of the chart represents the spread of forecasted values in the various ensemble members. The sizes of the vertical dashes should be understood to show the relative amount of uncertainty in the ensembles for a month, not the absolute magnitude of the uncertainty. For example, in the figure above the spread of values in July looks very large compared to April and May but is a small magnitude when you read the values of the spread on the y-axis.</p>
+                    <p><strong>Multi-Line:</strong> This plot shows 3 lines connecting the maximum, minimum and average of each month's ensembles.</p>
+                    <p><strong>Box Plot:</strong> This is a statistical representation of the same data shown in the previous plots.</p>
                     <p>For options to save the chart as a graphic or download the values in the plot, use the icon on the top right of the chart.</p>
                 </div>
                 <div class="modal-footer">
