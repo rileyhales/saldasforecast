@@ -45,7 +45,7 @@ def home(request):
     )
 
     ensemble = SelectInput(
-        display_text='Pick Ensemble Number',
+        display_text='Filter Ensemble Number/Average',
         name='ensemble',
         multiple=False,
         original=True,

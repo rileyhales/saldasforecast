@@ -64,7 +64,7 @@ def get_ensemblenumbers():
 
 def get_charttypes():
     return [
-        ('Single-Line Timeseries', 'singleline'),
-        ('Multi-Line Timeseries', 'multiline'),
         ('Box-Whisker Plot', 'boxplot'),
+        ('Multi-Line Timeseries', 'multiline'),
+        ('Single-Line Timeseries', 'singleline'),
     ]

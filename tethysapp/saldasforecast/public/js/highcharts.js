@@ -164,11 +164,12 @@ function getChart(drawnItems) {
             method: 'POST',
             success: function (result) {
                 plotdata = result;
-                if ($("#charttype").val() === 'singleline') {
+                let charttype = $("#charttype").val();
+                if (charttype === 'singleline') {
                     newSingleLinePlot(plotdata);
-                } else if ($("#charttype").val() === 'multiline') {
+                } else if (charttype === 'multiline') {
                     newMultiLinePlot(plotdata);
-                } else if ($("#charttype").val() === 'boxplot') {
+                } else if (charttype === 'boxplot') {
                     newBoxWhiskerPlot(plotdata);
                 }
             }
