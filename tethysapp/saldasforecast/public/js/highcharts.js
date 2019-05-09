@@ -50,10 +50,7 @@ function newSingleLinePlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {
-            align: "center",
-            text: data['name'] + ' v Time',
-        },
+        title: {align: "center", text: 'Forecasted ' + data['anomtype'] + ' ' + data['name'] + ' v Time'},
         xAxis: {
             type: 'datetime',
             title: {text: "Time"},
@@ -79,10 +76,7 @@ function newMultiLinePlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {
-            align: "center",
-            text: data['name'] + ' v Time',
-        },
+        title: {align: "center", text: 'Forecasted ' + data['anomtype'] + ' ' + data['name'] + ' v Time'},
         xAxis: {
             type: 'datetime',
             title: {text: "Time"},
@@ -90,10 +84,10 @@ function newMultiLinePlot(data) {
         yAxis: {title: {text: data['units']}},
         series: [
             {
-            data: data['multiline']['min'],
-            type: "line",
-            name: 'Forecast Minimum',
-            tooltip: {xDateFormat: '%A, %b %e, %Y'},
+                data: data['multiline']['min'],
+                type: "line",
+                name: 'Forecast Minimum',
+                tooltip: {xDateFormat: '%A, %b %e, %Y'},
             },
             {
                 data: data['multiline']['max'],
@@ -122,7 +116,7 @@ function newBoxWhiskerPlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {text: data['name'] + ' v Time'},
+        title: {align: "center", text: 'Forecasted ' + data['anomtype'] + ' ' + data['name'] + ' v Time'},
         legend: {enabled: false},
         xAxis: {
             type: 'datetime',
@@ -159,6 +153,7 @@ function getChart(drawnItems) {
             coords: coords,
             variable: $('#variables').val(),
             anomaly: $("#anomaly").val(),
+            ensemble: $("#ensemble").val(),
         };
 
         $.ajax({

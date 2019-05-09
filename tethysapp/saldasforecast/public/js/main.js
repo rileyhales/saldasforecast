@@ -89,11 +89,6 @@ $("#anomaly").change(function (self) {
     controlsObj = makeControls();
     getChart(drawnItems);
     legend.addTo(mapObj);
-    if ($("#anomaly").val() === 'ensemble_mean') {
-        $("#box-warning").show();
-    } else {
-        $("#box-warning").hide();
-    }
 });
 
 $("#ensemble").change(function () {

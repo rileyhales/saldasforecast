@@ -18,6 +18,7 @@ def timeseriesplot(request):
             name = key
             break
     plotdata['name'] = name
+    plotdata['anomtype'] = str(data['anomaly']).capitalize()
     return JsonResponse(plotdata)
 
 

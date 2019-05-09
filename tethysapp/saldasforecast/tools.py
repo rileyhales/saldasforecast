@@ -15,10 +15,11 @@ def ts_plot(data):
     coords = data['coords']
     anomtype = data['anomaly']
 
+    # get a list of all the netcdf files but only include the ensemble members, not monthly means
     configs = app_configuration()
     path = os.path.join(configs['threddsdatadir'], anomtype)
     allfiles = os.listdir(path)
-    files = [nc for nc in allfiles if nc.startswith(anomtype)]
+    files = [nc for nc in allfiles if nc.startswith(anomtype + '.anomaly')]
     files.sort()
     del configs
 
@@ -39,7 +40,8 @@ def ts_plot(data):
         datapath = os.path.join(path, nc)
         dataset = netCDF4.Dataset(datapath, 'r')
         # get rid of the starter characters, slice the string to get the timestep
-        time = nc.replace(anomtype, '').replace('.', '')[0:6]
+        time = nc.replace(anomtype, '')
+        time = time.replace('.anomaly.', '').replace('.ens_mean_anomaly.', '')[0:6]
         t_step = datetime.datetime.strptime(time, "%Y%m")
         t_step = calendar.timegm(t_step.utctimetuple()) * 1000
         if t_step not in uniquedates:
@@ -70,8 +72,7 @@ def ts_plot(data):
         plotdata['multiline']['max'].append((date, daymax))
         plotdata['multiline']['mean'].append((date, mean))
         # get statistics for the box plot format, if its not the average
-        if anomtype != 'ensemble_mean':
-            std = statistics.stdev(dailyvalues)
-            plotdata['boxplot'].append([daymin, mean - std, mean, mean + std, daymax])
+        std = statistics.stdev(dailyvalues)
+        plotdata['boxplot'].append([daymin, mean - std, mean, mean + std, daymax])
 
     return plotdata
