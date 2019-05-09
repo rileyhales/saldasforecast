@@ -35,12 +35,7 @@ function basemaps() {
 }
 
 function newLayer() {
-    let wmsurl;
-    if ($("#anomaly").val() === 'ensemble_mean') {
-        wmsurl =  wmsbase + $("#anomaly").val() + '.ncml';
-    } else {
-        wmsurl = wmsbase + $("#anomaly").val() + $("#ensemble").val();
-    }
+    let wmsurl = wmsbase + $("#anomaly").val() + $("#ensemble").val();
     let wmsLayer = L.tileLayer.wms(wmsurl, {
         // version: '1.3.0',
         layers: $("#variables").val(),

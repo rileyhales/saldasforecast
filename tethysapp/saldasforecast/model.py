@@ -43,14 +43,15 @@ def app_configuration():
 
 def get_anomalytypes():
     return [
-        ('Anomaly Values', 'anomaly'),
-        ('Standard Deviation from Anomaly', 'std_anomaly'),
-        ('Ensemble Mean', 'ensemble_mean')
+        ('Daily Anomaly', 'daily'),
+        ('Dekad (10 day) Anomaly', 'dekad'),
+        ('Monthly Anomaly', 'monthly')
     ]
 
 
 def get_ensemblenumbers():
     return [
+        ('Mean', '_mean.ncml'),
         (1, '_ens0.ncml'),
         (2, '_ens1.ncml'),
         (3, '_ens2.ncml'),
