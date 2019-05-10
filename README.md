@@ -26,7 +26,7 @@ Data in the is aggregated by year using NetCDF Markup Language (.ncml). The file
 If you did it correctly, your folder structure should exactly mirror this format:
 ~~~~
 saldasforecast
---->daily
+--->daily/
     --->(all the daily datasets go in this directory)
     --->ensemble member naming convention: daily.anomaly.YYYYMM.nc
     --->ensemble mean naming convention: daily.ensemble_mean_anomaly.nc
@@ -35,7 +35,7 @@ saldasforecast
 --->daily_ens2.ncml
     ...
 
---->dekad
+--->dekad/
     --->(all the dekad datasets go in this directory)
     --->ensemble member naming convention: dekad.anomaly.YYYYMM.nc
     --->ensemble mean naming convention: dekad.ensemble_mean_anomaly.nc
@@ -44,7 +44,7 @@ saldasforecast
 --->dekad_ens2.ncml
     ...
 
---->monthly
+--->monthly/
     --->(all the monthly datasets go in this directory)
     --->ensemble member naming convention: monthly.anomaly.YYYYMM.nc
     --->ensemble mean naming convention: monthly.ensemble_mean_anomaly.nc
@@ -93,27 +93,27 @@ You'll need to reset the Thredds server so the catalog is regenerated with the e
 The data shown on this app are currently hosted on the monsoon server of JHU. you want the split ensemble method of dividing datasets. Download those datasets and save them in the appropriately named folder you used previously (ie monthly, dekad, and monthly). Your new folder structure should look like this (ncml files excluded in this example):
 ~~~~
 saldasforecast
---->daily
+--->daily/
     --->daily.anomaly.201903.ens0.nc
         ...
     --->daily.ensemble_mean_anomaly.nc
     
---->dekad
+--->dekad/
     --->dekad.anomaly.201903.ens0.nc
         ...
     --->dekad.ensemble_mean_anomaly.nc
     
---->monthly
+--->monthly/
     --->monthly.anomaly.201903.ens0.nc
         ...
     --->monthly.ensemble_mean_anomaly.nc
 ~~~~
 
-Verify that you have completed steps 2 and 3 correctly by viewing the Thredds catalog through a web browser. The default address will be something like ```yourserver.com/thredds/catalog.html```. Navigate to the ```Test all files...``` folder. Your ```saldasforecast``` folder should be visible. Open it and check that all your ```.ncml``` files are visible and that the ```.nc``` files are visible in the ```/3splitensemble``` directory. If they are not, review steps 2 and 3 and restart your Thredds server.
+Verify that you have completed steps 2 and 3 correctly by viewing the Thredds catalog through a web browser. The default address will be something like ```yourserver.com/thredds/catalog.html```. Navigate to the ```Test all files...``` folder. Your ```saldasforecast``` folder should be visible. Open it and check that all your ```.ncml``` files are visible and that the ```.nc``` files are visible in the sub-directories. If they are not, review steps 2 and 3 and restart your Thredds server.
 
 ## 4 Set The Custom Settings
 You need to specify 2 custom settings when you install the app. The file path to where you are storing the gldas netCDF files locally on the server and the base wms URL for the thredds server that will be serving the data.
 
 **Local File Path:** This is the full path to the directory named saldasforecast that you should have created within the thredds data directory during step 2. You can get this by navigating to that folder in the terminal and then using the ```pwd``` command. (example: ```/tomcat/content/thredds/saldasforecast/```)  
 
-**WMS base address:** This is the base that the app uses to build urls for each of the OGC WMS layers for the netcdf datasets. If you followed the typical configuration of thredds (these instructions) then your base url will look something like ```yourserver.com/thredds/wms/testAll/saldasforecast/```. You can verify this by opening the thredds catalog in a web browser (typically at ```yourserver.com/thredds/catalog.html```). Navigate to one of the LDAS netcdf files and click the WMS link. A page showing an xml document should load. Copy the url in the address bar until you get to the ```/saldasforecast/``` folder in that url. Do not include ```/3splitsensemble/name_of_dataset.nc``` or the request info that comes after it. (example: ```https://tethys.byu.edu/thredds/wms/testAll/saldasforecast/```)
+**WMS base address:** This is the base that the app uses to build urls for each of the OGC WMS layers for the netcdf datasets. If you followed the typical configuration of thredds (these instructions) then your base url will look something like ```yourserver.com/thredds/wms/testAll/saldasforecast/```. You can verify this by opening the thredds catalog in a web browser (typically at ```yourserver.com/thredds/catalog.html```). Navigate to one of the LDAS netcdf files and click the WMS link. A page showing an xml document should load. Copy the url in the address bar until you get to the ```/saldasforecast/``` folder in that url. Do not include ```/monthly/name_of_dataset.nc``` or the request info that comes after it. (example: ```https://tethys.byu.edu/thredds/wms/testAll/saldasforecast/```)
