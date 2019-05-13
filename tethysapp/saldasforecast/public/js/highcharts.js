@@ -140,7 +140,7 @@ function newBoxWhiskerPlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time (District 1)'},
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time (Nepal Average)'},
         legend: {enabled: false},
         xAxis: {
             type: 'datetime',
