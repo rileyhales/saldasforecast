@@ -37,6 +37,7 @@ def app_configuration():
     return {
         'app_wksp_path': os.path.join(Saldasforecast.get_app_workspace().path, ''),
         'threddsurl': Saldasforecast.get_custom_setting("Thredds WMS URL"),
+        'geoserverurl': Saldasforecast.get_custom_setting("Geoserver Workspace URL"),
         'threddsdatadir': Saldasforecast.get_custom_setting("Local Thredds Folder Path"),
     }
 

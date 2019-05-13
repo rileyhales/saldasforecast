@@ -17,7 +17,7 @@ class Saldasforecast(TethysAppBase):
     tags = ''
     enable_feedback = False
     feedback_emails = []
-    updated = '10 May 2019'
+    updated = '13 May 2019'
     youtubelink = 'https://www.youtube.com/watch?v=r2o0oC8WaqQ'
 
     def url_maps(self):
@@ -60,14 +60,18 @@ class Saldasforecast(TethysAppBase):
                 type=CustomSetting.TYPE_STRING,
                 description="Path to data in the folder mounted by Thredds (e.g. /Users/rileyhales/thredds/saldasforecast/)",
                 required=True,
-                # /Users/rileyhales/thredds/forecasts/
             ),
             CustomSetting(
                 name='Thredds WMS URL',
                 type=CustomSetting.TYPE_STRING,
                 description="URL to the folder of GLDAS data and .ncml files on the thredds server (e.g. http://127.0.0.1:7000/thredds/wms/testAll/saldasforecast/)",
                 required=True,
-                # http://127.0.0.1:7000/thredds/wms/testAll/forecasts/
+            ),
+            CustomSetting(
+                name='Geoserver Workspace URL',
+                type=CustomSetting.TYPE_STRING,
+                description="URL for this app's geoserver WMS enabled workspace (e.g. https://tethys.byu.edu/geoserver/test/wms)",
+                required=True,
             ),
         )
         return CustomSettings

@@ -211,7 +211,6 @@ function getShapeChart() {
         shapefile: 'true',
         distnum: $("#districtnum").val(),
     };
-    console.log(data);
     $.ajax({
         url: '/apps/saldasforecast/ajax/getSpatialAverage/',
         data: JSON.stringify(data),
@@ -219,7 +218,6 @@ function getShapeChart() {
         contentType: "application/json",
         method: 'POST',
         success: function (result) {
-            console.log(result);
             newSpatialAveragePlot(result);
         }
     })

@@ -24,6 +24,12 @@ let districts_sld = '<?xml version="1.0" encoding="ISO-8859-1"?>\n' +
     '    </UserStyle>\n' +
     '  </NamedLayer>\n' +
     '</StyledLayerDescriptor>';
+const bounds = {
+    'Tair_f_tavg': '-15,15',
+    'SoilMoist_inst': '-23,15',
+    'Rainf_f_tavg': '-700,800',
+    'Evap_tavg': '-90,80'
+};
 
 ////////////////////////////////////////////////////////////////////////  MAP FUNCTIONS
 function map() {
@@ -62,7 +68,9 @@ function basemaps() {
 }
 
 function newLayer() {
-    let wmsurl = wmsbase + $("#anominterval").val() + $("#ensemble").val();
+    let wmsurl = threddsbase + $("#anominterval").val() + $("#ensemble").val();
+    console.log($("#variables").val());
+    console.log(bounds[$("#variables").val()]);
     let wmsLayer = L.tileLayer.wms(wmsurl, {
         // version: '1.3.0',
         layers: $("#variables").val(),
@@ -74,7 +82,7 @@ function newLayer() {
         opacity: $("#opacity").val(),
         BGCOLOR: '0x000000',
         styles: 'boxfill/' + $('#colors').val(),
-        colorscalerange: '-15,15',
+        colorscalerange: bounds[$("#variables").val()],
     });
 
     let timedLayer = L.timeDimension.layer.wms(wmsLayer, {
@@ -89,7 +97,7 @@ function newLayer() {
 }
 
 function districtboundaries() {
-    return L.tileLayer.wms('https://tethys.byu.edu/geoserver/test/wms', {
+    return L.tileLayer.wms(geoserverbase, {
         layers: 'test:NepalDistricts',
         format: 'image/png',
         transparent: true,
@@ -114,3 +122,17 @@ function clearMap() {
     mapObj.removeLayer(districts);
     mapObj.removeControl(controlsObj);
 }
+
+let legend = L.control({position: 'bottomright'});
+legend.onAdd = function (mapObj) {
+    let div = L.DomUtil.create('div', 'legend');
+    let url;
+    if ($("#anominterval").val() === 'ensemble_mean') {
+        url =  threddsbase + $("#anominterval").val() + '.ncml';
+    } else {
+        url = threddsbase + $("#anominterval").val() + $("#ensemble").val();
+    }
+    url = url + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=" + bounds[$("#variables").val()];
+    div.innerHTML = '<img src="' + url + '" alt="legend" style="width:100%; float:right;">';
+    return div
+};

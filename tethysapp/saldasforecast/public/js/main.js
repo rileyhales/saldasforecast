@@ -15,7 +15,7 @@ $.ajaxSetup({
 });
 
 ////////////////////////////////////////////////////////////////////////  LOAD THE MAP
-function getThreddswms() {
+function getThreddswms() {              // get the url paths to start drawing maps
     $.ajax({
         url: '/apps/saldasforecast/ajax/customsettings/',
         async: false,
@@ -24,16 +24,19 @@ function getThreddswms() {
         contentType: "application/json",
         method: 'POST',
         success: function (result) {
-            wmsbase = result['threddsurl'];
+            threddsbase = result['threddsurl'];
+            geoserverbase = result['geoserverurl'];
         },
     });
 }
 
-let wmsbase;
+let threddsbase;
+let geoserverbase;
 getThreddswms();                        // sets the value of wmsbase
 const mapObj = map();                   // used by legend and draw controls
 const basemapObj = basemaps();          // used in the make controls function
-let districts = districtboundaries();
+let districts = districtboundaries();   // the district boundaries layer
+legend.addTo(mapObj);                   // the color scale/legend
 
 ////////////////////////////////////////////////////////////////////////  SETUP DRAWING AND LAYER CONTROLS
 let drawnItems = new L.FeatureGroup().addTo(mapObj);      // FeatureGroup is to store editable layers
@@ -64,27 +67,8 @@ mapObj.on(L.Draw.Event.CREATED, function (event) {
 let layerObj = newLayer();              // adds the wms raster layer
 let controlsObj = makeControls();       // the layer toggle controls top-right corner
 
-////////////////////////////////////////////////////////////////////////  CREATE/ADD LEGEND
-let legend = L.control({position: 'bottomright'});
-legend.onAdd = function (mapObj) {
-    let div = L.DomUtil.create('div', 'legend');
-    let url;
-    if ($("#anominterval").val() === 'ensemble_mean') {
-        url =  wmsbase + $("#anominterval").val() + '.ncml';
-    } else {
-        url = wmsbase + $("#anominterval").val() + $("#ensemble").val();
-    }
-    url = url + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=-15,15";
-    div.innerHTML = '<img src="' + url + '" alt="legend" style="width:100%; float:right;">';
-    return div
-};
-legend.addTo(mapObj);
-
-
 ////////////////////////////////////////////////////////////////////////  EVENT LISTENERS
-
-//  Listener for the variable picker menu (selectinput gizmo)
-$("#anominterval").change(function (self) {
+$("#anominterval").change(function () {
     clearMap();
     layerObj = newLayer();
     controlsObj = makeControls();
