@@ -105,20 +105,16 @@ def nc_to_gtiff(data):
     Author: Riley Hales, RCH Engineering, March 2019
     """
     var = str(data['variable'])
-    tperiod = data['time']
+    anominterval = data['anominterval']
     configs = app_configuration()
     data_dir = configs['threddsdatadir']
     times = []
     units = ''
 
-    path = os.path.join(data_dir, 'raw')
+    path = os.path.join(data_dir, anominterval)
     allfiles = os.listdir(path)
-    if tperiod == 'alltimes':
-        files = [nc for nc in allfiles if nc.startswith("GLDAS_NOAH025_M.A")]
-        files.sort()
-    else:
-        files = [nc for nc in allfiles if nc.startswith("GLDAS_NOAH025_M.A" + str(tperiod))]
-        files.sort()
+    files = [nc for nc in allfiles if nc.startswith(anominterval + '.ens')]
+    files.sort()
 
     # Remove old geotiffs before filling it
     geotiffdir = os.path.join(App.get_app_workspace().path, 'geotiffs')
@@ -135,8 +131,8 @@ def nc_to_gtiff(data):
         units = nc_obj[var].__dict__['units']
 
         # create the timesteps for the highcharts plot
-        t_value = (nc_obj['time'].__dict__['begin_date'])
-        t_step = datetime.datetime.strptime(t_value, "%Y%m%d")
+        t_value = (nc_obj['time'].__dict__['units'])
+        t_step = datetime.datetime.strptime(t_value, "days since %Y-%m-%d 00:00:00")
         times.append(calendar.timegm(t_step.utctimetuple()) * 1000)
 
         # format the array of information going to the tiff
@@ -184,8 +180,7 @@ def rastermask_average_gdalwarp(data):
     wrkpath = App.get_app_workspace().path
 
     if data['shapefile'] == 'true':
-        region = data['region']
-        shppath = os.path.join(wrkpath, 'shapefiles', region, region.replace(' ', '') + '.shp')
+        shppath = os.path.join(wrkpath, 'NepalDistricts', 'NepalDistricts.shp')
     else:
         # todo: still under development- turn a geojson into a shapefile
         print('ya can\'t do that yet')
@@ -199,7 +194,7 @@ def rastermask_average_gdalwarp(data):
         # clip the raster
         inraster = gdal.Open(os.path.join(geotiffdir, 'geotiff' + str(i) + '.tif'))
         savepath = os.path.join(geotiffdir, 'outraster.tif')
-        clippedraster = gdal.Warp(savepath, inraster, format='GTiff', cutlineDSName=shppath, dstNodata=numpy.nan)
+        clippedraster = gdal.Warp(savepath, inraster, format='GTiff', cutlineDSName=shppath, dstNodata=numpy.nan,) # cutlineSQL="SELECT * FROM COLUMNS WHERE DCODE='" + str(data['distnum']) + "'",)
         # do the averaging math on the raster as an array
         array = gdalnumeric.DatasetReadAsArray(clippedraster)
         array = array.flatten()

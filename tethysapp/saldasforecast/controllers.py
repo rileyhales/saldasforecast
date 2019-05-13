@@ -69,14 +69,6 @@ def home(request):
         initial=.8,
     )
 
-    districtnum = SelectInput(
-        display_text='Pick a District Number',
-        name='districtnum',
-        multiple=False,
-        original=True,
-        options=[(i+1, i+1) for i in range(70)],
-    )
-
     context = {
         'variables': variables,
         'opacity': opacity,
@@ -84,7 +76,6 @@ def home(request):
         'ensemble': ensemble,
         'anominterval': anominterval,
         'charttype': charttype,
-        'districtnum': districtnum,
         'updated': App.updated,
         'youtubelink': App.youtubelink,
     }

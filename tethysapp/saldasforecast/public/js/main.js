@@ -128,6 +128,6 @@ $("#charttype").change(function () {
     }
 });
 
-$("#shpaverage").click(function () {
+$("#districtstats").click(function () {
     getShapeChart();
 });

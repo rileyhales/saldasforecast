@@ -40,9 +40,14 @@ class Saldasforecast(TethysAppBase):
                 controller='saldasforecast.ajax.customsettings'
             ),
             UrlMap(
-                name='customsettings',
+                name='timeseriesplot',
                 url='saldasforecast/ajax/timeseriesplot',
                 controller='saldasforecast.ajax.timeseriesplot'
+            ),
+            UrlMap(
+                name='getSpatialAverage',
+                url='saldasforecast/ajax/getSpatialAverage',
+                controller='saldasforecast.ajax.get_spatialaverage',
             ),
         )
 

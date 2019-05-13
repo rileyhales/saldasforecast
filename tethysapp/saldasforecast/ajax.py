@@ -31,18 +31,19 @@ def get_spatialaverage(request):
     from .model import forecast_variables
     import ast
 
-    response = {}
+    plotdata = {}
     data = ast.literal_eval(request.body.decode('utf-8'))
-    data['times'], response['units'] = nc_to_gtiff(data)
-    response['values'] = rastermask_average_gdalwarp(data)
+    data['times'], plotdata['units'] = nc_to_gtiff(data)
+    plotdata['values'] = rastermask_average_gdalwarp(data)
 
     variables = forecast_variables()
     for key in variables:
         if variables[key] == data['variable']:
             name = key
-            response['name'] = name
+            plotdata['name'] = name
             break
-    return JsonResponse(response)
+    plotdata['anominterval'] = str(data['anominterval']).capitalize()
+    return JsonResponse(plotdata)
 
 
 @login_required()

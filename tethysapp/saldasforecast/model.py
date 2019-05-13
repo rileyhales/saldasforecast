@@ -43,9 +43,9 @@ def app_configuration():
 
 def get_anomalytypes():
     return [
-        ('Daily Anomaly', 'daily'),
+        ('Monthly Anomaly', 'monthly'),
         ('Dekad (10 day) Anomaly', 'dekad'),
-        ('Monthly Anomaly', 'monthly')
+        # ('Daily Anomaly', 'daily'),
     ]
 
 

@@ -50,7 +50,7 @@ function newSingleLinePlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' v Time'},
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time'},
         xAxis: {
             type: 'datetime',
             title: {text: "Time"},
@@ -66,6 +66,30 @@ function newSingleLinePlot(data) {
     });
 }
 
+function newSpatialAveragePlot(data) {
+    chart = Highcharts.chart('highchart', {
+        chart: {
+            type: 'area',
+            animation: true,
+            zoomType: 'x',
+            borderColor: '#000000',
+            borderWidth: 2,
+        },
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time'},
+        xAxis: {
+            type: 'datetime',
+            title: {text: "Time"},
+        },
+        yAxis: {title: {text: data['units']}},
+        series: [{
+            data: data['values'],
+            type: "line",
+            name: data['name'],
+            tooltip: {xDateFormat: '%A, %b %e, %Y'},
+        }],
+
+    });
+}
 
 function newMultiLinePlot(data) {
     chart = Highcharts.chart('highchart', {
@@ -76,7 +100,7 @@ function newMultiLinePlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' v Time'},
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time'},
         xAxis: {
             type: 'datetime',
             title: {text: "Time"},
@@ -116,7 +140,7 @@ function newBoxWhiskerPlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' v Time'},
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time (District 1)'},
         legend: {enabled: false},
         xAxis: {
             type: 'datetime',
@@ -185,17 +209,18 @@ function getShapeChart() {
         variable: $('#variables').val(),
         anominterval: $("#anominterval").val(),
         shapefile: 'true',
-        region: $("#regions").val(),
+        distnum: $("#districtnum").val(),
     };
+    console.log(data);
     $.ajax({
-        url: '/apps/gldas/ajax/getSpatialAverage/',
+        url: '/apps/saldasforecast/ajax/getSpatialAverage/',
         data: JSON.stringify(data),
         dataType: 'json',
         contentType: "application/json",
         method: 'POST',
         success: function (result) {
             console.log(result);
-            newHighchart(result);
+            newSpatialAveragePlot(result);
         }
     })
 }
