@@ -18,8 +18,31 @@ def timeseriesplot(request):
             name = key
             break
     plotdata['name'] = name
-    plotdata['anomtype'] = str(data['anomaly']).capitalize()
+    plotdata['anominterval'] = str(data['anominterval']).capitalize()
     return JsonResponse(plotdata)
+
+
+@login_required()
+def get_spatialaverage(request):
+    """
+    Used to do averaging of a variable over a polygon of area, user drawn or a shapefile
+    """
+    from .tools import nc_to_gtiff, rastermask_average_gdalwarp
+    from .model import forecast_variables
+    import ast
+
+    response = {}
+    data = ast.literal_eval(request.body.decode('utf-8'))
+    data['times'], response['units'] = nc_to_gtiff(data)
+    response['values'] = rastermask_average_gdalwarp(data)
+
+    variables = forecast_variables()
+    for key in variables:
+        if variables[key] == data['variable']:
+            name = key
+            response['name'] = name
+            break
+    return JsonResponse(response)
 
 
 @login_required()

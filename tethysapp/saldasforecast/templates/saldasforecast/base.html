@@ -67,16 +67,16 @@
     <a class="btn btn-warning btn-block" role="button" data-toggle="modal" data-target="#maps-modal">How To Interpret This Map</a>
     <li>{% gizmo select_input variables %}</li>
     <li>{% gizmo select_input colors %}</li>
-    <li>{% gizmo select_input anomaly %}</li>
+    <li>{% gizmo select_input anominterval %}</li>
     <li>{% gizmo select_input ensemble %}</li>
     <li>{% gizmo range_slider opacity %}</li>
 
     <li class="title">Chart Controls</li>
     <a class="btn btn-warning btn-block" role="button" data-toggle="modal" data-target="#chart-modal">How To Interpret This Chart</a>
     <li>{% gizmo select_input charttype %}</li>
-    <div id="box-warning" style="display: none; text-align: center">
-      <strong>Box and Multi-Line Plots are not available for ensemble mean. Variance cannot be computed for one value.</strong>
-    </div>
+    <li>{% gizmo select_input districtnum %}</li>
+    <a class="btn btn-warning btn-block" role="button" id="districtstats">Get The Average For This District</a>
+
 
     <li class="title">Help and Resources</li>
     <a class="btn btn-warning btn-block" role="button" href="{{ youtubelink }}" target="_blank">Watch a Video Demonstration</a>

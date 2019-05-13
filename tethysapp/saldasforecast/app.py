@@ -17,7 +17,7 @@ class Saldasforecast(TethysAppBase):
     tags = ''
     enable_feedback = False
     feedback_emails = []
-    updated = '6 May 2019'
+    updated = '10 May 2019'
     youtubelink = 'https://www.youtube.com/watch?v=r2o0oC8WaqQ'
 
     def url_maps(self):

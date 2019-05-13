@@ -33,6 +33,7 @@ let wmsbase;
 getThreddswms();                        // sets the value of wmsbase
 const mapObj = map();                   // used by legend and draw controls
 const basemapObj = basemaps();          // used in the make controls function
+let districts = districtboundaries();
 
 ////////////////////////////////////////////////////////////////////////  SETUP DRAWING AND LAYER CONTROLS
 let drawnItems = new L.FeatureGroup().addTo(mapObj);      // FeatureGroup is to store editable layers
@@ -68,10 +69,10 @@ let legend = L.control({position: 'bottomright'});
 legend.onAdd = function (mapObj) {
     let div = L.DomUtil.create('div', 'legend');
     let url;
-    if ($("#anomaly").val() === 'ensemble_mean') {
-        url =  wmsbase + $("#anomaly").val() + '.ncml';
+    if ($("#anominterval").val() === 'ensemble_mean') {
+        url =  wmsbase + $("#anominterval").val() + '.ncml';
     } else {
-        url = wmsbase + $("#anomaly").val() + $("#ensemble").val();
+        url = wmsbase + $("#anominterval").val() + $("#ensemble").val();
     }
     url = url + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=-15,15";
     div.innerHTML = '<img src="' + url + '" alt="legend" style="width:100%; float:right;">';
@@ -83,7 +84,7 @@ legend.addTo(mapObj);
 ////////////////////////////////////////////////////////////////////////  EVENT LISTENERS
 
 //  Listener for the variable picker menu (selectinput gizmo)
-$("#anomaly").change(function (self) {
+$("#anominterval").change(function (self) {
     clearMap();
     layerObj = newLayer();
     controlsObj = makeControls();
@@ -127,3 +128,6 @@ $("#charttype").change(function () {
     }
 });
 
+$("#shpaverage").click(function () {
+    getShapeChart();
+});

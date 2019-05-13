@@ -50,7 +50,7 @@ function newSingleLinePlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anomtype'] + ' ' + data['name'] + ' v Time'},
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' v Time'},
         xAxis: {
             type: 'datetime',
             title: {text: "Time"},
@@ -76,7 +76,7 @@ function newMultiLinePlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anomtype'] + ' ' + data['name'] + ' v Time'},
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' v Time'},
         xAxis: {
             type: 'datetime',
             title: {text: "Time"},
@@ -116,7 +116,7 @@ function newBoxWhiskerPlot(data) {
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anomtype'] + ' ' + data['name'] + ' v Time'},
+        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' v Time'},
         legend: {enabled: false},
         xAxis: {
             type: 'datetime',
@@ -152,7 +152,7 @@ function getChart(drawnItems) {
         let data = {
             coords: coords,
             variable: $('#variables').val(),
-            anomaly: $("#anomaly").val(),
+            anominterval: $("#anominterval").val(),
             ensemble: $("#ensemble").val(),
         };
 
@@ -176,4 +176,26 @@ function getChart(drawnItems) {
         });
     }
 
+}
+
+function getShapeChart() {
+    chart.hideNoData();
+    chart.showLoading();
+    let data = {
+        variable: $('#variables').val(),
+        anominterval: $("#anominterval").val(),
+        shapefile: 'true',
+        region: $("#regions").val(),
+    };
+    $.ajax({
+        url: '/apps/gldas/ajax/getSpatialAverage/',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: "application/json",
+        method: 'POST',
+        success: function (result) {
+            console.log(result);
+            newHighchart(result);
+        }
+    })
 }
