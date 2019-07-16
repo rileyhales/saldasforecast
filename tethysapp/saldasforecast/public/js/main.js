@@ -15,30 +15,11 @@ $.ajaxSetup({
 });
 
 ////////////////////////////////////////////////////////////////////////  LOAD THE MAP
-function getThreddswms() {              // get the url paths to start drawing maps
-    $.ajax({
-        url: '/apps/saldasforecast/ajax/customsettings/',
-        async: false,
-        data: '',
-        dataType: 'json',
-        contentType: "application/json",
-        method: 'POST',
-        success: function (result) {
-            threddsbase = result['threddsurl'];
-            geoserverbase = result['geoserverurl'];
-        },
-    });
-}
-
-let threddsbase;
-let geoserverbase;
-getThreddswms();                        // sets the value of wmsbase
+// threddsbase and geoserverbase and model are defined in the base.html scripts sections
 const mapObj = map();                   // used by legend and draw controls
 const basemapObj = basemaps();          // used in the make controls function
-let districts = districtboundaries();   // the district boundaries layer
-legend.addTo(mapObj);                   // the color scale/legend
 
-////////////////////////////////////////////////////////////////////////  SETUP DRAWING AND LAYER CONTROLS
+////////////////////////////////////////////////////////////////////////  DRAWING/LAYER CONTROLS, MAP EVENTS, LEGEND
 let drawnItems = new L.FeatureGroup().addTo(mapObj);      // FeatureGroup is to store editable layers
 let drawControl = new L.Control.Draw({
     edit: {
@@ -50,7 +31,7 @@ let drawControl = new L.Control.Draw({
         circlemarker: false,
         circle: false,
         polygon: false,
-        rectangle: false,
+        rectangle: true,
     },
 });
 mapObj.addControl(drawControl);
@@ -60,58 +41,45 @@ mapObj.on("draw:drawstart ", function () {     // control what happens when the 
 mapObj.on(L.Draw.Event.CREATED, function (event) {
     drawnItems.addLayer(event.layer);
     L.Draw.Event.STOP;
-    getChart(drawnItems);
-    // e.layer.addTo(drawnItems);
+    getDrawnChart(drawnItems);
 });
+
+mapObj.on("mousemove", function (event) {$("#mouse-position").html('Lat: ' + event.latlng.lat.toFixed(5) + ', Lon: ' + event.latlng.lng.toFixed(5));});
 
 let layerObj = newLayer();              // adds the wms raster layer
 let controlsObj = makeControls();       // the layer toggle controls top-right corner
+legend.addTo(mapObj);                   // add the legend graphic to the map
+latlon.addTo(mapObj);                   // add the box showing lat and lon to the map
+addGEOJSON();                           // add the geojson world boundary regions
 
 ////////////////////////////////////////////////////////////////////////  EVENT LISTENERS
-$("#anominterval").change(function () {
-    clearMap();
-    layerObj = newLayer();
-    controlsObj = makeControls();
-    getChart(drawnItems);
-    legend.addTo(mapObj);
-});
-
-$("#ensemble").change(function () {
-    clearMap();
-    layerObj = newLayer();
-    controlsObj = makeControls();
-    legend.addTo(mapObj);
-});
-
-$("#variables").change(function () {
-    clearMap();
-    layerObj = newLayer();
-    controlsObj = makeControls();
-    getChart(drawnItems);
-    legend.addTo(mapObj);
-});
-
-$("#opacity").change(function () {
-    layerObj.setOpacity($('#opacity').val());
-});
-
-$('#colors').change(function () {
-    clearMap();
-    layerObj = newLayer();
-    controlsObj = makeControls();
-    legend.addTo(mapObj);
-});
-
-$("#charttype").change(function () {
-    if ($("#charttype").val() === 'singleline') {
-        newSingleLinePlot(plotdata);
-    } else if ($("#charttype").val() === 'multiline') {
-        newMultiLinePlot(plotdata);
-    } else if ($("#charttype").val() === 'boxplot') {
-        newBoxWhiskerPlot(plotdata);
+function update() {
+    for (let i in geojsons) {
+        geojsons[i].addTo(mapObj)
     }
-});
+    usershape.addTo(mapObj);
+    layerObj = newLayer();
+    controlsObj = makeControls();
+    legend.addTo(mapObj);
+}
+$(".customs").keyup(function () {this.value = this.value.replace(/i[a-z]/, '')});
 
-$("#districtstats").click(function () {
-    getShapeChart();
-});
+// data controls
+$("#variables").change(function () {clearMap();update();getDrawnChart(drawnItems);});
+$("#anominterval").change(function () {clearMap();update();getDrawnChart(drawnItems);});
+$("#ensemble").change(function () {clearMap();update();getDrawnChart(drawnItems);});
+$('#charttype').change(function () {makechart();});
+$("#levels").change(function () {clearMap();update();});
+
+// display controls
+$("#display").click(function() {$("#displayopts").toggle();});
+$("#cs_min").change(function () {if ($("#use_csrange").is(":checked")) {clearMap();update()}});
+$("#cs_max").change(function () {if ($("#use_csrange").is(":checked")) {clearMap();update()}});
+$("#use_csrange").change(function () {clearMap();update()});
+$('#colorscheme').change(function () {clearMap();update();});
+$("#opacity").change(function () {layerObj.setOpacity($(this).val())});
+$('#gjClr').change(function () {styleGeoJSON();});
+$("#gjOp").change(function () {styleGeoJSON();});
+$("#gjWt").change(function () {styleGeoJSON();});
+$('#gjFlClr').change(function () {styleGeoJSON();});
+$("#gjFlOp").change(function () {styleGeoJSON();});

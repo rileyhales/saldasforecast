@@ -7,19 +7,18 @@ Highcharts.setOptions({
         downloadPNG: "Download PNG image",
         downloadSVG: "Download SVG vector image",
         downloadXLS: "Download XLS",
-        loading: "Loading timeseries, please wait...",
-        noData: "No Data Selected"
+        loading: "Timeseries loading, please wait...",
+        noData: "No Data Selected. Place a point, draw a polygon, or select a region."
     },
 });
 
-let plotdata;
-let chart;
+let chartdata = null;
 
 // Placeholder chart
-chart = Highcharts.chart('highchart', {
+let chart = Highcharts.chart('highchart', {
     title: {
         align: "center",
-        text: "Your Chart Will Appear Here",
+        text: "Timeseries Data Chart Placeholder",
     },
     series: [{
         data: [],
@@ -40,185 +39,211 @@ chart = Highcharts.chart('highchart', {
     },
 });
 
-
-function newSingleLinePlot(data) {
+function newHighchart(data) {
     chart = Highcharts.chart('highchart', {
-        chart: {
-            type: 'area',
-            animation: true,
-            zoomType: 'x',
-            borderColor: '#000000',
-            borderWidth: 2,
+        title: {
+            align: "center",
+            text: data['name'] + ' v Time ' + '(' + data['type'] + ')',
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time'},
         xAxis: {
             type: 'datetime',
             title: {text: "Time"},
         },
-        yAxis: {title: {text: data['units']}},
+        yAxis: {
+            title: {text: data['units']}
+        },
         series: [{
             data: data['singleline'],
             type: "line",
             name: data['name'],
-            tooltip: {xDateFormat: '%A, %b %e, %Y'},
+            tooltip: {
+                xDateFormat: '%A, %b %e, %Y',
+            },
         }],
-
-    });
-}
-
-function newSpatialAveragePlot(data) {
-    chart = Highcharts.chart('highchart', {
         chart: {
+            animation: true,
+            zoomType: 'xy',
+            borderColor: '#000000',
+            borderWidth: 2,
             type: 'area',
-            animation: true,
-            zoomType: 'x',
-            borderColor: '#000000',
-            borderWidth: 2,
+
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time'},
-        xAxis: {
-            type: 'datetime',
-            title: {text: "Time"},
-        },
-        yAxis: {title: {text: data['units']}},
-        series: [{
-            data: data['values'],
-            type: "line",
-            name: data['name'],
-            tooltip: {xDateFormat: '%A, %b %e, %Y'},
-        }],
 
     });
 }
 
-function newMultiLinePlot(data) {
+function newMultilineChart(data) {
+    let charttype = $("#charttype").val();
     chart = Highcharts.chart('highchart', {
-        chart: {
-            type: 'line',
-            animation: true,
-            zoomType: 'x',
-            borderColor: '#000000',
-            borderWidth: 2,
+        title: {
+            align: "center",
+            text: data['name'] + ' v Time ' + '(' + data['type'] + ') (stats for all ensembles)',
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time'},
         xAxis: {
-            type: 'datetime',
             title: {text: "Time"},
         },
-        yAxis: {title: {text: data['units']}},
+        yAxis: {
+            title: {text: data['units']}
+        },
         series: [
             {
                 data: data['multiline']['min'],
                 type: "line",
-                name: 'Forecast Minimum',
-                tooltip: {xDateFormat: '%A, %b %e, %Y'},
+                name: 'Yearly Minimum',
             },
             {
                 data: data['multiline']['max'],
                 type: "line",
-                name: 'Forecast Maximum',
-                tooltip: {xDateFormat: '%A, %b %e, %Y'},
+                name: 'Yearly Maximum',
             },
             {
                 data: data['multiline']['mean'],
                 type: "line",
-                name: 'Forecast Average',
-                tooltip: {xDateFormat: '%A, %b %e, %Y'},
+                name: 'Yearly Average',
             }
         ],
+        chart: {
+            animation: true,
+            zoomType: 'xy',
+            borderColor: '#000000',
+            borderWidth: 2,
+            type: 'area',
+
+        },
 
     });
 }
 
-
-function newBoxWhiskerPlot(data) {
+function newBoxPlot(data) {
+    let charttype = $("#charttype").val();
     chart = Highcharts.chart('highchart', {
         chart: {
             type: 'boxplot',
             animation: true,
-            zoomType: 'x',
+            zoomType: 'xy',
             borderColor: '#000000',
             borderWidth: 2,
         },
-        title: {align: "center", text: 'Forecasted ' + data['anominterval'] + ' ' + data['name'] + ' Anomaly v Time (Nepal Average)'},
+        title: {align: "center", text: data['name'] + ' Statistics ' + '(' + data['type'] + ') (stats for all ensembles)'},
         legend: {enabled: false},
         xAxis: {
-            type: 'datetime',
-            // categories: ['1', '2', '3', '4', '5'],
-            title: {text: 'Time',}
+            title: {text: 'Time'},
+            // categories: data['categories'],
         },
         yAxis: {title: {text: data['units']}},
         series: [{
             name: data['name'],
             data: data['boxplot'],
-            tooltip: {xDateFormat: '%A, %b %e, %Y',},
+            tooltip: {xDateFormat: '%b',},
         }]
 
     });
 }
 
+function getDrawnChart(drawnItems) {
+    // if there's nothing to get charts for then quit
+    let geojson = drawnItems.toGeoJSON()['features'];
+    if (geojson.length === 0 && currentregion === '') {
+        return
+    }
 
-function getChart(drawnItems) {
-//  Compatibility if user picks something out of normal bounds
-    let geometry = drawnItems.toGeoJSON()['features'];
-    if (geometry.length > 0) {
+    // if there's geojson data, update that chart
+    if (geojson.length > 0) {
         chart.hideNoData();
         chart.showLoading();
 
-        let coords = geometry[0]['geometry']['coordinates'];
-        if (coords[0] < -180) {
-            coords[0] += 360;
-        }
-        if (coords[0] > 180) {
-            coords[0] -= 360;
+        //  Compatibility if user picks something out of normal bounds
+        let coords = geojson[0]['geometry']['coordinates'];
+        for (let i in coords.length) {
+            if (coords[i] < -180) {
+                coords[i] += 360;
+            }
+            if (coords[i] > 180) {
+                coords[i] -= 360;
+            }
         }
 
+        // setup a parameters json to generate the right timeserie
         let data = {
             coords: coords,
-            variable: $('#variables').val(),
-            anominterval: $("#anominterval").val(),
+            variable: $("#variables").val(),
             ensemble: $("#ensemble").val(),
+            anominterval: $("#anominterval").val(),
+            loc_type: geojson[0]['geometry']['type']
         };
 
+        // decide which ajax url you need based on drawing type
         $.ajax({
-            url: '/apps/saldasforecast/ajax/timeseriesplot/',
+            url: '/apps/' + app + '/ajax/getChart/',
             data: JSON.stringify(data),
             dataType: 'json',
             contentType: "application/json",
             method: 'POST',
             success: function (result) {
-                plotdata = result;
-                let charttype = $("#charttype").val();
-                if (charttype === 'singleline') {
-                    newSingleLinePlot(plotdata);
-                } else if (charttype === 'multiline') {
-                    newMultiLinePlot(plotdata);
-                } else if (charttype === 'boxplot') {
-                    newBoxWhiskerPlot(plotdata);
-                }
+                chartdata = result;
+                makechart();
             }
-        });
+        })
+        // If there isn't any geojson, then you actually should refresh the shapefile chart (ie the data is the lastregion)
+    } else {
+        getShapeChart('lastregion');
     }
-
 }
 
-function getShapeChart() {
+function getShapeChart(selectedregion) {
+    // if the time range is all times then confirm before executing the spatial averaging
+    if ($("#dates").val() === 'alltimes') {
+        if (!confirm("Computing a timeseries of spatial averages for all available times requires over 200 iterations of file conversions and geoprocessing operations. This may result in a long wait (15+ seconds) or cause errors. Are you sure you want to continue?")) {
+            return
+        }
+    }
+
+    drawnItems.clearLayers();
     chart.hideNoData();
     chart.showLoading();
+
+    // setup a parameters json to generate the right timeseries
     let data = {
-        variable: $('#variables').val(),
+        variable: $("#variables").val(),
+        ensemble: $("#ensemble").val(),
         anominterval: $("#anominterval").val(),
-        shapefile: 'true',
-        distnum: $("#districtnum").val(),
+        loc_type: 'Shapefile'
     };
+
+    if (selectedregion === 'lastregion') {
+        // if we want to update, change the region to the last completed region
+        data['region'] = currentregion;
+    } else if (selectedregion === 'customshape') {
+        data['region'] = selectedregion;
+        currentregion = selectedregion;
+    } else {
+        // otherwise, the new selection is the current region on the chart
+        data['region'] = selectedregion;
+        currentregion = selectedregion;
+    }
+
     $.ajax({
-        url: '/apps/saldasforecast/ajax/getSpatialAverage/',
+        url: '/apps/' + app + '/ajax/getChart/',
         data: JSON.stringify(data),
         dataType: 'json',
         contentType: "application/json",
         method: 'POST',
         success: function (result) {
-            newSpatialAveragePlot(result);
+            chartdata = result;
+            makechart();
         }
     })
+}
+
+function makechart() {
+    if (chartdata !== null) {
+        let type = $("#charttype").val();
+        if (type === 'singleline') {
+            newHighchart(chartdata);
+        } else if (type === 'multiline') {
+            newMultilineChart(chartdata);
+        } else if (type === 'boxplot') {
+            newBoxPlot(chartdata);
+        }
+    }
 }

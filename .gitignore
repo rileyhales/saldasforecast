@@ -10,3 +10,9 @@
 .idea
 .idea/*
 geotiffs/
+*.tiff
+*.zip
+*.shp
+*.shx
+*.dbf
+*.prj

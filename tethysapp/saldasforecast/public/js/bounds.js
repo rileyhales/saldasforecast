@@ -1,0 +1,1 @@
+const bounds = {'Tair_f_tavg': '-12,12', 'SoilMoist_inst': '-23,15', 'Rainf_f_tavg': '-700,800', 'Evap_tavg': '-90,80'};

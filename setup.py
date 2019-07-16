@@ -10,7 +10,7 @@ app_class = 'saldasforecast.app:Saldasforecast'
 app_package_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tethysapp', app_package)
 
 # -- Python Dependencies -- #
-dependencies = ['netcdf4', 'numpy', 'statistics']
+dependencies = ['netcdf4', 'numpy', 'statistics', 'rasterio', 'rasterstats']
 
 setup(
     name=release_package,

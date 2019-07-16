@@ -5,140 +5,92 @@
 {% load staticfiles %}
 
 {% block title %}{{ tethys_app.name }}{% endblock %}
-
-{% block app_icon %}
-{# The path you provided in your app.py is accessible through the tethys_app.icon context variable #}
-<img src="{% static tethys_app.icon %}">
-{% endblock %}
-
-{# The name you provided in your app.py is accessible through the tethys_app.name context variable #}
-{% block app_title %}{{ tethys_app.name }}{% endblock %}
-
-{% block after_app_content %}
-    <div class="modal fade" id="maps-modal" tabindex="-1" role="dialog" aria-labelledby="maps-modal-label">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title" id="maps-modal-label">Animated Maps</h3>
-                </div>
-                <div class="modal-body">
-                  <p>The data shown in this map is based on NASA LDAS. Since these are long term forecasts, there is uncertainty in the predictions. Many predictions are made and treated collectively in a group referred to as an ensemble. Each of the predictions are numbered and viewable by changing the Ensemble Number control. The data have been processed to show only anomalies, departures from the historical average or "normal" value, and regions that are anomalies by more than 1 standard deviation above/below the average.</p>
-                  <p><strong>Animate the map vs Time:</strong> Use the controls found in the bottom right of the map region to animate the map data over time. Use the play button to cycle through the 9 months of forecast values or use the slider to get to a specific time step. Because of the uncertainty and processing steps, the maps will appear choppy when animated over time. This is normal given the data being represented herein.</p>
-                  <p><strong>Place points:</strong> Use the point marker and trash can control to place a marker on the map at a location of your choice. The app will generate a timeseries of forecasted values at that location vs time. Use the chart controls for more customization.</p>
-                  <p>You may change the variable and ensemble number to change the data being shown as well as the opacity and color scheme to change the representation.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="chart-modal" tabindex="-1" role="dialog" aria-labelledby="chart-modal-label">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title" id="chart-modal-label">Timeseries Plots</h3>
-                </div>
-                <div class="modal-body">
-                    <img src="{% static 'saldasforecast/images/samplechart.jpeg' %}" style="width: 100%;">
-                    <p>This app will plot a timeseries for a location within the bounds of the forecasted data. To generate a timeseries plot, click the Point Marker icon found on the top left of the map and then place the marker somewhere on the map within the boundaries of the forecast. The chart plots each of the monthly forecasted values, for each of the ensembles, for the location you choose.</p>
-                    <p><strong>Single-Line:</strong> The vertical dashes over each month of the chart represents the spread of forecasted values in the various ensemble members. The sizes of the vertical dashes should be understood to mean the relative amount of uncertainty in the ensembles for a month. The magnitude of the uncertainty can be found by reading values from the y-axis.</p>
-                    <p><strong>Multi-Line:</strong> This plot shows 3 lines connecting the maximum, minimum and average of each ensemble member at each time increment in the forecast.</p>
-                    <p><strong>Box Plot:</strong> This is a statistical representation of the same data shown in the previous plots.</p>
-                    <p>For options to save the chart as a graphic or download the values in the plot, use the icon on the top right of the chart.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
+{% block app_icon %}<img src="{% static tethys_app.icon %}">{% endblock %}
+{% block app_title %}{{ tethys_app.name }} ({{ version }}){% endblock %}
 
 
 {% block app_navigation_items %}
+  <li class="title">Data Controls</li>
+    {% gizmo select_input variables %}
+    {% gizmo select_input anominterval %}
+    {% gizmo select_input ensemble %}
+    {% gizmo select_input charttype %}
 
-    <li class="title">Map Controls</li>
-    <a class="btn btn-warning btn-block" role="button" data-toggle="modal" data-target="#maps-modal">How To Interpret This Map</a>
-    <li>{% gizmo select_input variables %}</li>
-    <li>{% gizmo select_input colors %}</li>
-    <li>{% gizmo select_input anominterval %}</li>
-    <li>{% gizmo select_input ensemble %}</li>
-    <li>{% gizmo range_slider opacity %}</li>
+  <button class="btn btn-default btn-block" role="button" id="customShpChart">Timeseries for my own Shapefile</button>
+  <br>
 
-    <li class="title">Chart Controls</li>
-    <a class="btn btn-warning btn-block" role="button" data-toggle="modal" data-target="#chart-modal">How To Interpret This Chart</a>
-    <li>{% gizmo select_input charttype %}</li>
-    <a class="btn btn-primary btn-block" role="button" id="districtstats">Get The Average Across All of Nepal</a>
-
-
-    <li class="title">Help and Resources</li>
-    <a class="btn btn-warning btn-block" role="button" href="{{ youtubelink }}" target="_blank">Watch a Video Demonstration</a>
-    <p><b>Last Updated: </b>{{ updated }}</p>
-    <p>Under Development at Brigham Young University by Riley Hales</p>
-
-{% endblock %}
-
-{% block app_content %}
-{% endblock %}
-
-{% block app_actions %}
+  <div style="text-align: center; padding-bottom: 12px">
+    <button class="btn btn-default" role="button" id="display">View Map Styling Controls</button>
+  </div>
+  <div id="displayopts" style="display: none;">
+    <div id="color-scales-gizmo" style="padding-bottom: 12px">
+      <div style="padding-bottom: 4px"><strong>Custom Color Scale Min/Max</strong></div>
+      <div>
+        Min: <input class="customs" id="cs_min" type="number" style="width: 20%;" value="0">
+        Max: <input class="customs" id="cs_max" type="number" style="width: 20%;" value="100">
+        Use? <input class="customs" id="use_csrange" type="checkbox">
+      </div>
+    </div>
+    {% gizmo select_input colorscheme %}
+    {% gizmo range_slider opacity %}
+    {% gizmo select_input gjClr %}
+    {% gizmo range_slider gjOp %}
+    {% gizmo range_slider gjWt %}
+    {% gizmo select_input gjFlClr %}
+    {% gizmo range_slider gjFlOp %}
+  </div>
 {% endblock %}
 
 {% block content_dependent_styles %}
-{{ block.super }}
-    <!-- styling for leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
-    <!-- styling for timeseries controls -->
-    <link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css" />
-    <!-- styling for the leaflet draw plugin -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw-src.css" />
+  {{ block.super }}
+  <!-- styling for leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"/>
+  <!-- styling for timeseries controls -->
+  <link rel="stylesheet"
+        href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css"/>
+  <!-- styling for the leaflet draw plugin -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw-src.css"/>
 
-    <!-- app specified styling -->
-    <link href="{% static 'saldasforecast/css/main.css' %}" rel="stylesheet"/>
+  <!-- styling generated for the app -->
+  <link href="{% static 'saldasforecast/css/main.css' %}" rel="stylesheet"/>
 {% endblock %}
 
 {% block scripts %}
-{{ block.super }}
-    <!-- Allows csrf verification with AJAX -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+  {{ block.super }}
+  <script>
+      let threddsbase = "{{ settings.threddsurl }}";
+      let app = "{{ app }}";
+  </script>
+  <!-- Allows csrf verification with AJAX -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
-    <!-- script for leaflet -->
-    <script type="text/javascript" src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
-    <!-- Leadlet with Esri -->
-    <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js" integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g==" crossorigin=""></script>
-    <!-- script for timeseries controls in leaflet -->
-    <script type="text/javascript" src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
-    <!-- allows you to use the leaflet draw plugin -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw-src.js"></script>
+  <!-- script for leaflet -->
+  <script type="text/javascript" src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+  <!-- Leadlet with Esri -->
+  <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js"
+          integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g=="
+          crossorigin=""></script>
+  <!-- script for timeseries controls in leaflet -->
+  <script type="text/javascript"
+          src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
+  <!-- allows you to use the leaflet draw plugin -->
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw-src.js"></script>
 
-    <!-- script for using highcharts (display timeseries plot) -->
-    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
-    <script type="text/javascript" src="https://code.highcharts.com/highcharts-more.js"></script>
-    <!-- Use this to export data from highcharts as csv, jpeg, etc -->
-    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <!-- Use this to show loading functions and placeholders -->
-    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+  <!-- script for using highcharts (display timeseries plot) -->
+  <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+  <script type="text/javascript" src="https://code.highcharts.com/highcharts-more.js"></script>
+  <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script type="text/javascript" src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script type="text/javascript" src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
 
+  <!-- scripts I wrote for the app, main should go last -->
+  <script src="{% static 'saldasforecast/js/gjson1.js' %}" type="text/javascript"></script>
+  <script src="{% static 'saldasforecast/js/bounds.js' %}" type="text/javascript"></script>
 
-    <!-- app javascript, main should go last -->
-    <script src="{% static 'saldasforecast/js/highcharts.js' %}" type="text/javascript"></script>
-    <script src="{% static 'saldasforecast/js/leaflet.js' %}" type="text/javascript"></script>
-    <script src="{% static 'saldasforecast/js/main.js' %}" type="text/javascript"></script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128273217-6"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-128273217-6');
-    </script>
-
+  <script src="{% static 'saldasforecast/js/customShp.js' %}" type="text/javascript"></script>
+  <script src="{% static 'saldasforecast/js/highcharts.js' %}" type="text/javascript"></script>
+  <script src="{% static 'saldasforecast/js/leaflet.js' %}" type="text/javascript"></script>
+  <script src="{% static 'saldasforecast/js/main.js' %}" type="text/javascript"></script>
 {% endblock %}

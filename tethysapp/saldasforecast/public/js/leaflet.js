@@ -1,36 +1,3 @@
-let districts_sld = '<?xml version="1.0" encoding="ISO-8859-1"?>\n' +
-    '<StyledLayerDescriptor version="1.0.0" \n' +
-    '    xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd" \n' +
-    '    xmlns="http://www.opengis.net/sld" \n' +
-    '    xmlns:ogc="http://www.opengis.net/ogc" \n' +
-    '    xmlns:xlink="http://www.w3.org/1999/xlink" \n' +
-    '    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
-    '  <NamedLayer>\n' +
-    '    <Name>Transparent polygon</Name>\n' +
-    '    <UserStyle>\n' +
-    '      <FeatureTypeStyle>\n' +
-    '        <Rule>\n' +
-    '          <PolygonSymbolizer>\n' +
-    '            <Fill>\n' +
-    '              <CssParameter name="fill">#0x000000</CssParameter>\n' +
-    '            </Fill>\n' +
-    '            <Stroke>\n' +
-    '              <CssParameter name="stroke">#FFFFFF</CssParameter>\n' +
-    '              <CssParameter name="stroke-width">2</CssParameter>\n' +
-    '            </Stroke>\n' +
-    '          </PolygonSymbolizer>\n' +
-    '        </Rule>\n' +
-    '      </FeatureTypeStyle>\n' +
-    '    </UserStyle>\n' +
-    '  </NamedLayer>\n' +
-    '</StyledLayerDescriptor>';
-const bounds = {
-    'Tair_f_tavg': '-15,15',
-    'SoilMoist_inst': '-23,15',
-    'Rainf_f_tavg': '-700,800',
-    'Evap_tavg': '-90,80'
-};
-
 ////////////////////////////////////////////////////////////////////////  MAP FUNCTIONS
 function map() {
     // create the map
@@ -49,7 +16,7 @@ function map() {
             backwardButton: true,
             forwardButton: true,
             timeSliderDragUpdate: true,
-            minSpeed: 1,
+            minSpeed: 2,
             maxSpeed: 6,
             speedStep: 1,
         },
@@ -58,81 +25,158 @@ function map() {
 
 function basemaps() {
     // create the basemap layers
-    let Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
-    let Esri_WorldTerrain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom: 13});
+    let Esri_WorldImagery = L.esri.basemapLayer('Imagery');
+    let Esri_WorldTerrain = L.esri.basemapLayer('Terrain');
     let Esri_Imagery_Labels = L.esri.basemapLayer('ImageryLabels');
     return {
-        "ESRI Imagery": L.layerGroup([Esri_WorldImagery, Esri_Imagery_Labels]).addTo(mapObj),
-        "ESRI Terrain": L.layerGroup([Esri_WorldTerrain, Esri_Imagery_Labels])
+        "ESRI Imagery (labeled)": L.layerGroup([Esri_WorldImagery, Esri_Imagery_Labels]).addTo(mapObj),
+        "ESRI Terrain (labeled)": L.layerGroup([Esri_WorldTerrain, Esri_Imagery_Labels]),
+        "ESRI Imagery": Esri_WorldImagery,
+        "ESRI Terrain": Esri_WorldTerrain
     }
 }
 
+////////////////////////////////////////////////////////////////////////  WMS LAYERS
 function newLayer() {
+    let layer = $("#variables").val();
     let wmsurl = threddsbase + $("#anominterval").val() + $("#ensemble").val();
-    console.log($("#variables").val());
-    console.log(bounds[$("#variables").val()]);
+    let cs_rng = bounds[layer];
+    if ($("#use_csrange").is(":checked")) {
+        cs_rng = String($("#cs_min").val()) + ',' + String($("#cs_max").val())
+    }
+
     let wmsLayer = L.tileLayer.wms(wmsurl, {
         // version: '1.3.0',
-        layers: $("#variables").val(),
+        layers: layer,
         dimension: 'time',
         useCache: true,
         crossOrigin: false,
         format: 'image/png',
         transparent: true,
-        opacity: $("#opacity").val(),
+        opacity: $("#opacity_raster").val(),
         BGCOLOR: '0x000000',
-        styles: 'boxfill/' + $('#colors').val(),
-        colorscalerange: bounds[$("#variables").val()],
+        styles: 'boxfill/' + $('#colorscheme').val(),
+        colorscalerange: cs_rng,
     });
 
-    let timedLayer = L.timeDimension.layer.wms(wmsLayer, {
+    return L.timeDimension.layer.wms(wmsLayer, {
         name: 'time',
         requestTimefromCapabilities: true,
         updateTimeDimension: true,
         updateTimeDimensionMode: 'replace',
         cache: 20,
     }).addTo(mapObj);
-
-    return timedLayer;
 }
 
-function districtboundaries() {
-    return L.tileLayer.wms(geoserverbase, {
-        layers: 'test:NepalDistricts',
-        format: 'image/png',
-        transparent: true,
-        opacity: 1,
-        BGCOLOR: '0x000000',
-        SLD_BODY: districts_sld,
-    }).addTo(mapObj);
+////////////////////////////////////////////////////////////////////////  GEOJSON LAYERS
+let currentregion = '';              // tracks which region is on the chart for updates not caused by the user picking a new region
+function layerPopups(feature, layer) {
+    let region = feature.properties.name;
+    layer.bindPopup('<a class="btn btn-default" role="button" onclick="getShapeChart(' + "'" + region + "'" + ')">Get timeseries (average) for ' + region + '</a>');
 }
 
-function makeControls() {
-    return L.control.layers(basemapObj, {
-        'GLDAS Layer': layerObj,
-        'Point': drawnItems,
-        'District Boundaries': districts
-    }).addTo(mapObj);
-}
+// create all the geojson layers for world regions
+const initstyle = {color: $("#gjClr").val(), opacity: $("#gjOp").val(), weight: $("#gjWt").val(), fillColor: $("#gjFlClr").val(), fillOpacity: $("#gjFlOp").val()};
+let jsonparams = {onEachFeature: layerPopups, style: initstyle};
 
-function clearMap() {
-    controlsObj.removeLayer(layerObj);
-    controlsObj.removeLayer(districts);
-    mapObj.removeLayer(layerObj);
-    mapObj.removeLayer(districts);
-    mapObj.removeControl(controlsObj);
-}
+let districts = L.geoJSON(districts_json, jsonparams);
+const geojsons = [districts];
 
-let legend = L.control({position: 'bottomright'});
-legend.onAdd = function (mapObj) {
-    let div = L.DomUtil.create('div', 'legend');
-    let url;
-    if ($("#anominterval").val() === 'ensemble_mean') {
-        url =  threddsbase + $("#anominterval").val() + '.ncml';
-    } else {
-        url = threddsbase + $("#anominterval").val() + $("#ensemble").val();
+function addGEOJSON() {
+    for (let i in geojsons) {
+        geojsons[i].addTo(mapObj)
     }
-    url = url + "?REQUEST=GetLegendGraphic&LAYER=" + $("#variables").val() + "&PALETTE=" + $('#colors').val() + "&COLORSCALERANGE=" + bounds[$("#variables").val()];
+}
+
+function styleGeoJSON() {
+    // determine the styling to apply
+    let style = {
+        color: $("#gjClr").val(),
+        opacity: $("#gjOp").val(),
+        weight: $("#gjWt").val(),
+        fillColor: $("#gjFlClr").val(),
+        fillOpacity: $("#gjFlOp").val(),
+    };
+    // apply it to all the geojson layers
+    for (let i in geojsons) {
+        geojsons[i].setStyle(style);
+    }
+    usershape.setStyle(style);
+}
+////////////////////////////////////////////////////////////////////////  USERS CUSTOM UPLOADED SHAPEFILE
+// gets the geojson layers from geoserver wfs and updates the layer
+let usershape = L.geoJSON(false);
+function getWFSData(gsworksp, shpname, gsurl) {
+    let parameters = L.Util.extend({
+        service: 'WFS',
+        version: '1.0.0',
+        request: 'GetFeature',
+        typeName: gsworksp + ':' + shpname,
+        maxFeatures: 10000,
+        outputFormat: 'application/json',
+        parseResponse: 'getJson',
+        srsName: 'EPSG:4326',
+        crossOrigin: 'anonymous'
+    });
+    $.ajax({
+        async: true,
+        jsonp: false,
+        url: gsurl + L.Util.getParamString(parameters),
+        contentType: 'application/json',
+        success: function (data) {
+            usershape.clearLayers();
+            usershape.addData(data).addTo(mapObj);
+            styleGeoJSON();
+        },
+    });
+}
+
+////////////////////////////////////////////////////////////////////////  LEGEND DEFINITIONS
+let legend = L.control({position: 'topright'});
+legend.onAdd = function () {
+    let layer = $("#variables").val();
+    let wmsurl = threddsbase + $("#anominterval").val() + $("#ensemble").val();
+    let cs_rng = bounds[layer];
+    if ($("#use_csrange").is(":checked")) {
+        cs_rng = String($("#cs_min").val()) + ',' + String($("#cs_max").val())
+    }
+
+    let div = L.DomUtil.create('div', 'legend');
+    let url = wmsurl + "?REQUEST=GetLegendGraphic&LAYER=" + layer + "&PALETTE=" + $('#colorscheme').val() + "&COLORSCALERANGE=" + cs_rng;
     div.innerHTML = '<img src="' + url + '" alt="legend" style="width:100%; float:right;">';
     return div
 };
+
+let latlon = L.control({position: 'bottomleft'});
+latlon.onAdd = function () {
+    let div = L.DomUtil.create('div', 'well well-sm');
+    div.innerHTML = '<div id="mouse-position" style="text-align: center"></div>';
+    return div;
+};
+
+////////////////////////////////////////////////////////////////////////  MAP CONTROLS AND CLEARING
+// the layers box on the top right of the map
+function makeControls() {
+    return L.control.layers(basemapObj, {
+        'Earth Observation': layerObj,
+        'Drawing': drawnItems,
+        'Uploaded Shapefile': usershape,
+        'Districts': districts,
+    }).addTo(mapObj);
+}
+
+// you need to remove layers when you make changes so duplicates dont persist and accumulate
+function clearMap() {
+    // remove the controls for the wms layer then remove it from the map
+    controlsObj.removeLayer(layerObj);
+    mapObj.removeLayer(layerObj);
+    controlsObj.removeLayer(usershape);
+    mapObj.removeLayer(usershape);
+    // now do it for all the geojson layers
+    for (let i in geojsons) {
+        controlsObj.removeLayer(geojsons[i]);
+        mapObj.removeLayer(geojsons[i]);
+    }
+    // now delete the controls object
+    mapObj.removeControl(controlsObj);
+}
